@@ -1,0 +1,200 @@
+﻿@model HNHB.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<h2>@ViewBag.Title</h2>
+@*<div class="well login-reg-form">
+    <!-- Heading -->
+    <div class="block-heading-two">
+        <h3><span>Thông tin đăng ký</span></h3>
+    </div>
+    <!-- Form -->
+    <!-- Form Horizontal -->
+    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+    {
+        @Html.AntiForgeryToken()
+        <h5>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</h5>
+                <!-- Form Group -->
+      
+       
+        <div class="form-group">
+            <label for="UserName" class="col-sm-4 control-label">Tên đăng nhập</label>
+            <div class="col-sm-8">
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="Password" class="col-sm-4 control-label">Mật khẩu</label>
+            <div class="col-sm-8">
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="ConfirmPassword" class="col-sm-4 control-label">Nhập lại mật khẩu</label>
+            <div class="col-sm-8">
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+        </div>
+     
+        <div class="form-group">
+            <div class="col-sm-offset-4 col-sm-8">
+                <!-- Buton -->
+                <button type="submit" class="btn btn-blue">Đăng ký</button>&nbsp;
+                <button type="reset" class="btn btn-white">Nhập lại</button>
+            </div>
+        </div>
+    }
+</div>*@
+
+
+
+
+<div class="container">
+    <div class="row" style="margin-top:0.5%">
+        
+        <div class="col-md-7 col-sm-12">
+            <div class="well login-reg-form">
+                <!-- Heading -->
+                <div class="block-heading-two">
+                    <h3><span>Thông tin đăng ký</span></h3>
+                </div>
+                <!-- Form -->
+                <!-- Form Horizontal -->
+              @using (Html.BeginForm("Register", "Account", FormMethod.Post,
+    new { @class = "form-horizontal", role = "form" }))
+              {
+                    @Html.AntiForgeryToken()
+                    <h5>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</h5>
+                <!-- Form Group -->
+                    <div class="form-group">
+                        <!-- Label -->
+                        <label for="FullName" class="col-sm-4 control-label">Họ và tên</label>
+                        <div class="col-sm-8">
+                            <!-- Input -->
+                            @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Email" class="col-sm-4 control-label">Email</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+    @*<div class="form-group">
+        <label for="UserName" class="col-sm-4 control-label">Tên đăng nhập</label>
+        <div class="col-sm-8">
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+        </div>
+    </div>*@
+                    <div class="form-group">
+                        <label for="Password" class="col-sm-4 control-label">Mật khẩu</label>
+                        <div class="col-sm-8">
+                            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="ConfirmPassword" class="col-sm-4 control-label">Nhập lại mật khẩu</label>
+                        <div class="col-sm-8">
+                            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <!-- Checkbox -->
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"> Đồng ý điều khoản sử dụng
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-4 col-sm-8">
+                            <!-- Buton -->
+                            <button type="submit" class="btn btn-blue">Đăng ký</button>&nbsp;
+                            <button type="reset" class="btn btn-white">Nhập lại</button>
+                        </div>
+                    </div>
+                }
+            </div>
+            @*<div class="row">
+                        <fieldset>
+                            @Html.AntiForgeryToken()
+                            <h5>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</h5>
+                            <label class="block clearfix">
+                                <span class="block input-icon input-icon-right">
+                                    @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @placeholder = "Tên đăng nhập" })
+                                    <i class="icon-user"></i>
+                                </span>
+                                <span class="help-block" for="UserName">@Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })</span>
+                            </label>
+                            <label class="block clearfix">
+                                <span class="block input-icon input-icon-right">
+                                    @Html.PasswordFor(m => m.Password, new { @class = "form-control", @placeholder = "Mật khẩu" })
+                                    <i class="icon-lock"></i>
+                                </span>
+                                <span class="help-block" for="Password">@Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })</span>
+                            </label>
+                            <label class="block clearfix">
+                                <span class="block input-icon input-icon-right">
+                                    @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", @placeholder = "Xác nhận lại mật khẩu" })
+                                    <i class="icon-retweet"></i>
+                                </span>
+                                <span class="help-block" for="ConfirmPassword">@Html.ValidationMessageFor(m => m.ConfirmPassword, "", new { @class = "text-danger" })</span>
+                            </label>
+                            <label class="block clearfix">
+                                <span class="block input-icon input-icon-right">
+                                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", @placeholder = "Họ và tên" })
+                                    <i class="icon-font"></i>
+                                </span>
+                                <span class="help-block" for="FullName">@Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })</span>
+                            </label>
+                            <label class="block clearfix">
+                                <span class="block input-icon input-icon-right">
+                                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @placeholder = "Email" })
+                                    <i class="icon-envelope"></i>
+                                </span>
+                                <span class="help-block" for="Email">@Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })</span>
+                            </label>
+                            <div class="clearfix">
+                                <button type="reset" class="width-30 pull-left btn btn-sm">
+                                    <i class="icon-refresh"></i>
+                                    Nhập lại
+                                </button>
+                                <button type="submit" class="width-65 pull-right btn btn-sm btn-success">
+                                    Đăng ký
+                                    <i class="icon-arrow-right icon-on-right"></i>
+                                </button>
+                            </div>
+                        </fieldset>
+                    </div>*@
+            </div>
+        </div>
+    </div>
+            
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+@if (ViewBag.ErrorMessage != null)
+{
+    <script>
+        $.amaran({
+            content: {
+                bgcolor: '#ED5441',
+                color: '#fff',
+                message: '<strong>Xin lỗi!</strong><p style="font-size:12px">@ViewBag.ErrorMessage</p>'
+            },
+            theme: 'colorful',
+            position: 'top right',
+        });
+    </script>
+}

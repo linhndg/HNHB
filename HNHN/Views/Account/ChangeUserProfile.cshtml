@@ -1,0 +1,95 @@
+﻿@model HNHB.Models.ChangeUserProfileModel
+@using System.Text.RegularExpressions
+@using HNHB.HelperExtension
+@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Quản lý tài khoản";
+}
+<link href="~/Content/themes/brave/css/styles/ecommerce.css" rel="stylesheet" />
+<div class="ecommerce" style="margin-top:20px">
+    <div class="col-md-3">
+        <!-- Shopping Sidebar -->
+        <div class="sidebar">
+            <!-- Heading -->
+            <h2>Quản lý</h2>
+            <!-- Sidebar Menu -->
+            <ul class="account-nav">
+                <li><a href="/Account/Manage/">Tài khoản</a></li>
+                <li><a href="/Account/ChangeUserProfile/">Chỉnh sửa thông tin</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <h4><i class="fa fa-user color"></i>&nbsp; Tài khoản&nbsp;<small>Thay đổi thông tin</small></h4>
+        <hr />
+        @using (Html.BeginForm("ChangeUserProfile", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                <!-- Label -->
+                <label for="fullname" class="col-sm-4 control-label">Họ tên</label>
+                <div class="col-sm-8">
+                    <!-- Input -->
+                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(m => m.FullName, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                <!-- Label -->
+                <label for="avatar" class="col-sm-4 control-label">Ảnh đại diện</label>
+                <div class="col-sm-8">
+                    <!-- Input -->
+                    <input id="file" name="file" type="file">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-8">
+                    <!-- Button -->
+                    <button type="submit" class="btn btn-green">Xác nhận</button>&nbsp;
+                    <button type="reset" class="btn btn-white">Nhập lại</button>
+                </div>
+            </div>
+        }
+        <h4><i class="fa fa-user color"></i>&nbsp; Mật khẩu&nbsp;<small>Thay đổi mật khẩu</small></h4>
+        <hr />
+        @Html.Partial("_ChangePasswordPartial", new HNHB.Models.LocalPasswordModel())
+    </div>
+</div>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+@if (ViewBag.SuccessMessage != null)
+{
+    <script>
+        $(function () {
+            var message = '<strong>Xin cảm ơn!</strong><p style="font-size:12px">@Html.Raw(ViewBag.SuccessMessage)</p>';
+            $.amaran({
+                content: {
+                    bgcolor: '#51D466',
+                    color: '#fff',
+                    message: message
+                },
+                theme: 'colorful',
+                position: 'top right',
+            });
+        });
+    </script>
+}
+@if (ViewBag.ErrorMessage != null)
+{
+    <script>
+        $(function () {
+            var message = '<strong>Xin lỗi!</strong><p style="font-size:12px">@Html.Raw(ViewBag.ErrorMessage)</p>';
+            $.amaran({
+                content: {
+                    bgcolor: '#ED5441',
+                    color: '#fff',
+                    message: message
+                },
+                theme: 'colorful',
+                position: 'top right',
+            });
+        });
+    </script>
+}

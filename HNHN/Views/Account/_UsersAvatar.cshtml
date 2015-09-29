@@ -1,0 +1,8 @@
+﻿@if (ViewBag.Avatar != null)
+{
+    <img alt="avatar" src="@Url.Content(ViewBag.Avatar)" class="nav-user-photo" />
+}
+else
+{
+    <img alt="avatar" src="@Url.Content("~/Content/img/non-avatar.png")" class="nav-user-photo" />
+}

@@ -1,0 +1,333 @@
+﻿@{
+    ViewBag.Title = "Trang chủ";
+}
+@model HNHB.Models.Entities.UserProfile
+@using System.Text.RegularExpressions
+@using HNHB.HelperExtension
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Hà Nội Handbook";
+}
+
+<link href="~/Content/themes/brave/css/styles/parallax.css" rel="stylesheet" />
+<style>
+    .main-pic-thumb {
+        height: 250px;
+        border-radius: 3px;
+        background-position: center center;
+        background-size: cover;
+    }
+</style>
+<script type="text/javascript">
+    $('.main-block div:first').removeClass('container');
+    $('.main-block div:first div:first').removeClass('row');
+</script>
+<div id="bs-carousel-2" class="carousel slide" data-ride="carousel" data-interval="3000" data-pause="hover" data-wrap="true" style="margin: 0px auto">
+    <!-- Bootstrap indicators. If you don't need indicators, remove the below section -->
+    <ol class="carousel-indicators">
+        <li data-target="#bs-carousel-2" data-slide-to="0" class="active"></li>
+        <li data-target="#bs-carousel-2" data-slide-to="1"></li>
+        <li data-target="#bs-carousel-2" data-slide-to="2"></li>
+        <li data-target="#bs-carousel-2" data-slide-to="3"></li>
+        <li data-target="#bs-carousel-2" data-slide-to="4"></li>
+    </ol>
+    <!-- Slides. You can also add captions -->
+    <div class="carousel-inner">
+        <!-- Item, First item should have extra class "active" -->
+        <div class="item active">
+            <!-- Image -->
+            <img src="/Content/img/home/slider/1.jpg" style="width:100%" />
+            <!-- Caption -->
+            <div class="carousel-caption c-bottom-right">
+                <!-- Heading -->
+                <h4><a href="#">Hà Nội về đêm</a></h4>
+                <!-- Para -->
+                <p>Hồ Gươm về đêm.</p>
+            </div>
+        </div>
+        <div class="item">
+            <img src="/Content/img/home/slider/2.jpg" style="width:100%" />
+            <div class="carousel-caption c-bottom-right">
+                <!-- Heading -->
+                <h4><a href="#">Cầu Nhật Lệ</a></h4>
+                <!-- Para -->
+                <p>Cầu Nhật Lệ, Cây cầu lớn nhất Hà Nội, bắc ngang qua sông Hồng</p>
+            </div>
+        </div>
+        <div class="item">
+            <img src="/Content/img/home/slider/3.jpg" style="width:100%" />
+            <div class="carousel-caption c-bottom-right">
+                <!-- Heading -->
+                <h4><a href="#">Cầu Long Biên</a></h4>
+                <!-- Para -->
+                <p>Cầu Long Biên là cây cầu thép đầu tiên bắc qua sông Hồng nối hai quận Hoàn Kiếm với quận Long Biên của Hà Nội, do Pháp xây dựng (1898-1902), đặt tên là cầu Doumer, theo tên của Toàn quyền Đông Dương Paul Doumer. Dân gian còn gọi là cầu sông Cái hay cầu Bồ Đề (vì nó được bắt qua bến Bồ Đề thuộc huyện Gia Lâm). Hiện trên đầu cầu vẫn còn tấm biển kim loại có khắc chữ 1899 -1902 - Daydé & Pillé - Paris.</p>
+            </div>
+        </div>
+        <div class="item">
+            <img src="/Content/img/home/slider/4.jpg" style="width:100%" />
+            <div class="carousel-caption c-bottom-right">
+                <!-- Heading -->
+                <h4><a href="#">Hồ Tây</a></h4>
+                <!-- Para -->
+                <p>Hồ Tây trước đây còn có các tên gọi khác như Đầm Xác Cáo, Hồ Kim Ngưu, Lãng Bạc, Dâm Đàm, Đoài Hồ, là một hồ nước tự nhiên lớn nhất ở nội thành Hà Nội. Hồ có diện tích hơn 500 ha với chu vi là 18 km [2]. Hồ nằm ở vị trí phía tây bắc trung tâm Hà Nội. Ngành địa lý lịch sử đã chứng minh, hồ Tây là một đoạn của sông Hồng xưa trong quá trình ngưng đọng lại sau khi sông đổi dòng chảy[3]. Các khu vực liền kề xung quanh hồ Tây sẽ được quy hoạch để trở thành trung tâm của Thủ đô Hà Nội mới trong tương lai gần. Thay thế dần vị trí hiện nay đang là Hồ Hoàn Kiếm.</p>
+            </div>
+        </div>
+        <div class="item">
+            <img src="/Content/img/home/slider/5.jpg" style="width:100%" />
+            <div class="carousel-caption c-bottom-right">
+                <!-- Heading -->
+                <h4><a href="#">Văn Miếu</a></h4>
+                <!-- Para -->
+                <p>Văn Miếu – Quốc Tử Giám(chữ Hán: 文廟 – 國子監) là quần thể di tích đa dạng và phong phú hàng đầu của thành phố Hà Nội, nằm ở phía Nam kinh thành Thăng Long. Hiện nay, nơi đây đã được thủ tướng chính phủ Việt Nam đưa vào danh sách xếp hạng 23 di tích quốc gia đặc biệt. Quần thể kiến trúc Văn Miếu - Quốc Tử Giám bao gồm: hồ Văn, khu Văn Miếu - Quốc Tử Giám và vườn Giám và kiến trúc chủ thể là Văn Miếu - nơi thờ Khổng Tử và Quốc Tử Giám - trường đại học đầu tiên của Việt Nam.</p>
+            </div>
+        </div>
+    </div>
+    <!-- Carousel controls (arrows). If you don't need controls, remove the below section -->
+    <a class="left carousel-control" href="#bs-carousel-2" role="button" data-slide="prev">
+        <span class="fa fa-chevron-left"></span>
+    </a>
+    <a class="right carousel-control" href="#bs-carousel-2" role="button" data-slide="next">
+        <span class="fa fa-chevron-right"></span>
+    </a>
+</div>
+<div class="parallax-three bg-white">
+    <div class="container">
+        <!-- Parallax text element block -->
+        <div class="p-element">
+            <!-- Heading -->
+            <h2>Hà Nội</h2>
+            <h3>Thủ đô Việt Nam</h3>
+            <a class="btn btn-blue" href="@Url.Action("About", "Home")">Thông tin về chúng tôi</a>
+        </div>
+    </div>
+</div>
+<div class="parallax-four" style="background-image:url('../../Content/img/home/1.jpg');padding:70px 0px 30px 0px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <!-- Parallax text element block -->
+                <div class="p-element">
+                    <!-- Heading -->
+                    <center><h2>Những địa điểm tuyệt vời</h2></center>
+                </div>
+            </div>
+            <div>
+                <div class="index-portfolio">
+                    <!-- Portfolio Start -->
+                    <div class="portfolio pf-one">
+                        <!-- Portfolio Block Content -->
+                        <div class="portfolio-content">
+                           @* <center id="filters">
+                               <a href="#" data-filter="*" class="btn btn-transparent">Tất cả</a>
+                                @foreach (var item in ViewBag.Sub)
+                                {
+                                    <a href="#" data-filter=".sub-@item.Id" class="btn btn-transparent">@item.Name</a>
+                                }
+                            </center>
+                            <div id="portfolio">
+                                @foreach (var place in Model)
+                                {
+                                    <div class="p-element sub-@place.SubCategoryId">
+                                        <div class="element" style="width:90%;margin-left:auto;margin-right:auto;">
+                                            <div class="image-style-one">
+                                                <!-- Image -->
+                                                <div class="main-pic-thumb br-grey br-size-1" style="background-image: url('@Url.Content(place.Images.First().ImagePath)');"></div>
+                                                <!-- image hover style for image #1 -->
+                                                <div class="image-hover br-lblue br-size-1">
+                                                    <!-- Image Caption -->
+                                                    <div class="image-caption" title="@place.Name">
+                                                        <!-- Heading -->
+                                                        @if (@place.Name.Length > 25)
+                                                        {
+                                                            <h4 style="font-size:16px">@place.Name.Substring(0, 25)</h4>
+                                                        }
+                                                        else
+                                                        {
+                                                            <h4 style="font-size:16px">@place.Name</h4>
+                                                        }
+                                                        <!-- Paragraph -->
+                                                        <p style="color:rgba(255, 255, 255, 0.8);font-size:14px">@place.Description.Substring(0, 65)...</p>
+                                                        <a href="@Url.Action("Details", "Place", new { id = place.Id })"><i class="fa fa-search"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>*@
+                                }
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Portfolio End -->
+                </div>
+            </div>
+            <center style="margin-top:20px">
+                <a class="btn btn-green" href="@Url.Action("Index", "Place")">Xem các địa điểm khác</a>
+            </center>
+        </div>
+    </div>
+</div>
+<div class="parallax-four" style="background-color:#FFF;background-image:none;padding:70px 0px 30px 0px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <!-- Parallax text element block -->
+                <div class="p-element">
+                    <!-- Heading -->
+                    <center><h2 style="color:#555;text-shadow:none">Hỏi đáp về Hà Nội</h2></center>
+                </div>
+            </div>
+            <div class="col-md-12 col-sm-12">
+                <!-- Testimonial with carousel -->
+                <div class="testimonials-one">
+                    <!-- Navigation -->
+                    <div class="owl-nav">
+                        <a class="owl-nav-prev"><i class="fa fa-chevron-left"></i></a>
+                        <a class="owl-nav-next"><i class="fa fa-chevron-right"></i></a>
+                    </div>
+                    <div class="owl-carousel" data-items="3" data-auto-play="true" data-pagination="false" data-single-item="false">
+                        @*@foreach (var item in ViewBag.Ask)
+                        {
+                             <!-- Carousel item starts -->
+                            <div class="owl-content">
+                                <!-- Testimonials one Item -->
+                                <div class="testimonials-one-item">
+                                    <div class="testimonials-one-content">
+                                        @{
+                            string text = item.Content;
+                            Regex reg = new Regex(@"</?img((\s+\w+(\s*=\s*(?:"".*?""|\'.*?\'|[^\'"">\s]+))?)+\s*|\s*)/?>");
+                            string result = reg.Replace(text, string.Empty);
+                            result = Regex.Replace(result, "<.*?>", string.Empty);
+                            <p>
+                                @Html.Raw(HttpUtility.HtmlDecode(Html.GetSummary(result, 75) + "..."))
+                                (<a href="@Url.Action("QuestionDetails", "Asking", new { id = item.Id })">Xem thêm</a>)
+                            </p>
+                                        }
+                                    </div>
+                                    <h5>
+                                        <a href="#">
+                                            @item.UserProfile.Fullname
+                                            @if (item.UserProfile.Avatar != null)
+                                            {
+                                                <img alt="avatar" src="@Url.Content(item.UserProfile.Avatar)" class="img-responsive img-circle" />
+                                            }
+                                            else
+                                            {
+                                                <img alt="avatar" src="@Url.Content("~/Content/img/non-avatar.png")" class="img-responsive img-circle" />
+                                            }
+                                        </a>
+                                    </h5>
+                                </div>
+                            </div> <!-- Carousel item ends -->
+                        }*@
+                    </div>
+                </div>
+            </div>
+        </div>
+        <center style="margin-top:30px">
+            <a class="btn btn-green" href="@Url.Action("Index", "Asking")">Xem các câu hỏi khác</a>
+        </center>
+    </div>
+</div>
+<div class="parallax-four" style="background-image:url('../../Content/img/home/2.jpg');padding:70px 0px 30px 0px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <!-- Parallax text element block -->
+                <div class="p-element">
+                    <!-- Heading -->
+                    <center><h2>Những bài viết về Hà Nội</h2></center>
+                </div>
+            </div>
+            @*@foreach (var item in ViewBag.Article)
+            {
+                <div class="col-md-3" style="margin-top:5px" title="@item.Title">
+                    <div class="bg-blue padd-15">
+                        <!-- Image -->
+                        @{
+                string content = item.Content;
+                if (Html.GetImgData(content) == null)
+                {
+                    <div class="main-pic-thumb" style="background-image: url('/Content/img/cau-song-Han-Da-Nang(1).jpg');height:150px"></div>
+                }
+                else
+                {
+                    <div class="main-pic-thumb" style="background-image: url('@Html.Raw(Html.GetImgData(content))');height:150px"></div>
+                }
+                        }
+                        <!-- Heading -->
+                        @if (@item.Title.Length > 35)
+                        {
+                            <h4 class="white">@item.Title.Substring(0, 35)...</h4>
+                        }
+                        else
+                        {
+                            <h4 class="white">@item.Title</h4>
+                        }
+                        <!-- Meta -->
+                        @{
+                DateTime date = item.CreateDate;
+                <div class="magazine-meta" style="color:rgba(255, 255, 255, 0.8);">
+                    <i class=" fa fa-calendar">
+                    </i> @date.ToTimeAgo() - <i class="fa fa-comments"></i> @item.Comments.Count Bình luận
+                </div>
+                        }
+                        <!-- Para -->
+                        @{
+                string text = item.Content;
+                Regex reg = new Regex(@"</?img((\s+\w+(\s*=\s*(?:"".*?""|\'.*?\'|[^\'"">\s]+))?)+\s*|\s*)/?>");
+                string result = reg.Replace(text, string.Empty);
+                result = Regex.Replace(result, "<.*?>", string.Empty);
+                <p class="white">
+                    @Html.Raw(HttpUtility.HtmlDecode(Html.GetSummary(result, 80) + "..."))
+                    (<a href="@Url.Action("ArticleDetails", "Article", new { id = item.Id })" class="white">Xem thêm</a>)
+                </p>
+                        }
+                    </div>
+                </div>
+            }*@
+        </div>
+        <center style="margin-top:30px">
+            <a class="btn btn-green" href="@Url.Action("Index", "Article")">Xem các bài viết khác</a>
+        </center>
+    </div>
+</div>
+<div class="parallax-four" style="background-color:#FFF;background-image:none;padding:70px 0px 30px 0px">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-sm-12">
+                <!-- Parallax text element block -->
+                <div class="p-element">
+                    <!-- Heading -->
+                    <center><h2 style="color:#555;text-shadow:none">Sự kiện nổi bật</h2></center>
+                </div>
+            </div>
+            @*<div class="col-md-12 col-sm-12">
+                @Html.Partial("~/Views/Calendar/PatialCalendar.cshtml")
+            </div>*@
+        </div>
+    </div>
+</div>
+<!-- Imageloaded -->
+<script src="~/Content/themes/brave/js/imagesloaded.min.js"></script>
+<!-- Isotope -->
+<script src="~/Content/themes/brave/js/isotope.js"></script>
+<script type="text/javascript">
+    var $container = $('#portfolio');
+
+    // Initialize isotope
+    $container.imagesLoaded(function () {
+        $container.fadeIn(1000).isotope({
+            layoutMode: 'fitRows',
+            itemSelector: '.p-element'
+        });
+    });
+
+    // Filter items when filter link is clicked
+
+    $('#filters a').click(function () {
+        var selector = $(this).attr('data-filter');
+        $container.isotope({ filter: selector });
+        return false;
+    });
+</script>

@@ -1,0 +1,86 @@
+﻿
+@using Microsoft.AspNet.Identity
+@model HNHB.Models.LoginViewModel
+@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+@if (ViewBag.ReturnUrl == null || ViewBag.ReturnUrl == "")
+{
+    ViewBag.ReturnUrl = Request.RawUrl;
+}
+@if (Request.IsAuthenticated)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+    <div class="tb-language dropdown pull-right">
+        <a aria-expanded="false" href="#" data-target="#" data-toggle="dropdown">Chào, @User.Identity.Name! <i class="fa fa-angle-down color"></i></a>
+        <!-- Dropdown menu with languages -->
+        <ul class="dropdown-menu dropdown-mini" role="menu">
+            <li><a href="/Account/Manage">Quản lý</a></li>
+            @if (User.IsInRole("Administrator"))
+            {
+                <li><a href="/Administrator/">Quản trị</a></li>
+            }
+            <li><a href="javascript:document.getElementById('logoutForm').submit()">Đăng xuất</a></li>
+        </ul>
+    </div>
+}
+else
+{
+    using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { id = "loginForm", onsubmit = "return validateLogin();" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div class="tb-shopping-cart pull-right">
+            <!-- Link with badge -->
+            <a href="#" class="btn btn-white btn-xs b-dropdown" id="loginLink"><i class="fa fa-user"></i> Đăng nhập <i class="fa fa-angle-down color"></i></a>
+            <!-- Dropdown content with item details -->
+            <div class="b-dropdown-block">
+                <!-- Heading -->
+                <h4><i class="fa fa-user color"></i> Thông tin đăng nhập</h4>
+                <ul class="list-unstyled">
+                    <li>
+                        @Html.TextBoxFor(m => m.Email, new { placeholder = "Tên đăng nhập", @class = "form-control" })
+                        <div class="clearfix"></div>
+                    </li>
+                    <li>
+                        @Html.PasswordFor(m => m.Password, new { placeholder = "Mật khẩu", @class = "form-control" })
+                        <div class="clearfix"></div>
+                    </li>
+                </ul>
+                <div class="checkbox">
+                    <div class="col-md-7" style="padding-left:0">
+                        <label>
+                            @Html.CheckBoxFor(m => m.RememberMe)
+                            <font size="2">Nhớ tài khoản</font>
+                        </label>
+                        <br />
+                        <font size="2"><a href="@Url.Action("ForgetPassword", "Account", null)" class="color">Quên mật khẩu?</a></font>
+                        <br />
+                        <font size="2"><a href="@Url.Action("Register", "Account", null)" class="color">Đăng ký</a></font>
+                    </div>
+                    <input type="submit" class="btn btn-color btn-sm col-md-5" value="Đăng nhập" />
+                </div>
+              
+            </div>
+        </div>
+    }
+}
+@if (ViewBag.ErrorMessage != null)
+{
+    <script>
+        $.amaran({
+            content: {
+                bgcolor: '#ED5441',
+                color: '#fff',
+                message: '<strong>Xin lỗi!</strong><p style="font-size:12px">@ViewBag.ErrorMessage</p>'
+            },
+            theme: 'colorful',
+            position: 'top right',
+        });
+    </script>
+}
+

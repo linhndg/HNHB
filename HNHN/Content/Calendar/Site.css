@@ -1,0 +1,33 @@
+﻿
+.DEFAULT {
+    
+    background-color: #FF9933;
+    border-color: #C0C0C0; 
+    color: White;
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
+    padding-left: 17px;
+}
+
+.ORTHER {
+    background-color: #33CCFF;
+    border-color: #C0C0C0;
+    color: White; /* text color */
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 17px;
+}
+
+.EXPIRED {
+    background-color: #33CC33;
+    border-color: #C0C0C0;
+    color: White; /* text color */
+    background-position: 1px 1px;
+    background-repeat: no-repeat;
+    padding-left: 17px;
+}
+
+h2 {
+font-size: 20px !important;  /* !important added to force override of any other h2 in CSS*/
+}
