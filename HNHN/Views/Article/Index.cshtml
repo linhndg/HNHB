@@ -1,0 +1,283 @@
+﻿@model IEnumerable<HNHB.Models.Entities.Article>
+@using System.Text.RegularExpressions
+@using HNHB.HelperExtension
+
+@{
+    ViewBag.Title = "Bài viết";
+}
+<style>
+    .main-pic-thumb {
+        height: 145px;
+        border-radius: 3px;
+        background-position: center center;
+        background-size: cover;
+    }
+</style>
+<div class="blog-one">
+    <div class="col-md-8">
+        @foreach (var item in Model)
+        {
+            var urlTitle = item.Title.ConvertToUnSign();
+            if (urlTitle.Length > 150)
+            {
+                urlTitle = urlTitle.Substring(0, 150);
+            }
+            <div class="blog-one-item">
+                <!-- blog One Img -->
+                <div class="blog-one-img" style="width:100%">
+                    <!-- Image -->
+                    @{
+            string content = item.Content;
+            if (Html.GetImgData(content) == null)
+            {
+                <div class="main-pic-thumb" style="background-image: url('/Content/img/quoctugiam.jpg')"></div>
+            }
+            else
+            {
+                <div class="main-pic-thumb" style="background-image: url('@Html.Raw(Html.GetImgData(content))')"></div>
+            }
+                    }
+                </div>
+                <!-- blog One Content -->
+                <div class="blog-one-content">
+                    <!-- Heading -->
+                    <h4><a href="@Url.Action("ArticleDetails", "Article", new { id = item.Id, title = urlTitle })">@item.Title</a></h4>
+                    <!-- Blog meta -->
+                    <div class="blog-meta" style="padding-left:0px">
+                        <div class="agency-item">
+                            <span class="agency-contact"><i class="fa fa-calendar circle-2 bg-red white"></i>&nbsp; @item.CreateDate.ToTimeAgo()</span> &nbsp;
+                            <span class="agency-contact"><i class="fa fa-user circle-2 bg-blue white"></i>&nbsp; @item.UserProfile.Fullname</span> &nbsp;
+                            <span class="agency-contact"><i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; @item.Comments.Count() Bình luận</span>  &nbsp;
+                        </div>
+                    </div>
+                    <!-- Paragraph -->
+                    @{
+
+            string text = item.Content;
+            Regex reg = new Regex(@"</?img((\s+\w+(\s*=\s*(?:"".*?""|\'.*?\'|[^\'"">\s]+))?)+\s*|\s*)/?>");
+            string result = reg.Replace(text, string.Empty);
+            result = Regex.Replace(result, "<.*?>", string.Empty);
+            <p style="word-wrap: break-word;">@Html.Raw(HttpUtility.HtmlDecode(Html.GetSummary(result, 120) + "..."))</p>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col-md-4">
+        <!-- Take action sidebar block -->
+        <div class="sidebar">
+            <!-- Search Widget -->
+            <div class="s-widget">
+                <!-- Heading -->
+                <h5><i class="fa fa-search color"></i>&nbsp; Tìm kiếm</h5>
+                <!-- Widgets Content -->
+                <div class="widget-content search">
+                    @using (Html.BeginForm("Index", "Article"))
+                    {
+                        <div class="input-group">
+                            <input class="form-control" type="text" id="txtSearch" name="key" value="@ViewBag.Key">
+                            <span class="input-group-btn">
+                                <button class="btn btn-color" type="submit">Tìm kiếm</button>
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="s-widget">
+                <!-- Heading -->
+                <h5><i class="fa fa-pencil color"></i>&nbsp; Bài viết</h5>
+                <!-- Widgets Content -->
+                <div class="widget-content tabs">
+                    <a class="btn btn-sm  btn-lblue" style="width:100%" href="@Url.Action("CreateArticle", "Article")">Bài viết mới</a>
+                    <div class="nav-tabs-two" style="margin-top:10px">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a href="#popular" data-toggle="tab">Xem nhiều</a></li>
+                            <li><a href="#recent" data-toggle="tab">Mới nhất</a></li>
+                            <li><a href="#comments" data-toggle="tab">Bình luận mới</a></li>
+                        </ul>
+                        <!-- Tab content -->
+                        <div class="tab-content">
+                            <!-- Popular posts -->
+                            <div class="tab-pane fade in active" id="popular">
+                                <ul>
+                                    @foreach (var item in ViewBag.lstByView)
+                                    {
+                                        string urlTitle = item.Title;
+                                        urlTitle = urlTitle.ConvertToUnSign();
+                                        if (urlTitle.Length > 150)
+                                        {
+                                            urlTitle = urlTitle.Substring(0, 150);
+                                        }
+                                        <li>
+                                            <a href="@Url.Action("ArticleDetails", "Article", new { id = item.Id, title = urlTitle })">
+                                                <!-- Item title -->
+                                                @{
+                                        string tit = item.Title;
+                                        if (tit.Length > 43)
+                                        {
+                                            <strong title="@tit">@tit.Substring(0, 40)<text>...</text></strong>
+                                        }
+                                        else
+                                        {
+                                            <strong>@tit</strong>
+                                        }
+                                                }
+                                                <div class="agency-item row">
+                                                    @{
+                                        DateTime date = item.CreateDate;
+                                        <div class="col-md-6">
+                                            <span class="agency-contact"><i class="fa fa-calendar circle-2 bg-red white"></i>&nbsp; @date.ToTimeAgo()</span>
+                                        </div>
+                                                        <div class="col-md-6">
+                                                            <span class="agency-contact"><i class="fa fa-eye circle-2 bg-yellow white"></i>&nbsp; @item.View Lượt xem</span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <!-- Recent posts -->
+                            <div class="tab-pane fade" id="recent">
+                                <ul>
+                                    @foreach (var item in ViewBag.lstByDate)
+                                    {
+                                        string urlTitle = item.Title;
+                                        urlTitle = urlTitle.ConvertToUnSign();
+                                        if (urlTitle.Length > 150)
+                                        {
+                                            urlTitle = urlTitle.Substring(0, 150);
+                                        }
+                                        <li>
+                                            <a href="@Url.Action("ArticleDetails", "Article", new { id = item.Id, title = urlTitle })">
+                                                <!-- Item title -->
+                                                @{
+                                        string tit = item.Title;
+                                        if (tit.Length > 43)
+                                        {
+                                            <strong title="@tit">@tit.Substring(0, 40)<text>...</text></strong>
+                                        }
+                                        else
+                                        {
+                                            <strong>@tit</strong>
+                                        }
+                                                }
+                                                <div class="agency-item row">
+                                                    @{
+                                        DateTime date = item.CreateDate;
+                                        <div class="col-md-6">
+                                            <span class="agency-contact"><i class="fa fa-calendar circle-2 bg-red white"></i>&nbsp; @date.ToTimeAgo() &nbsp;</span>
+                                        </div>
+                                                        <div class="col-md-6">
+                                                            <span class="agency-contact"><i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; @item.Comments.Count Bình luận</span>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                            <!-- Recent comments -->
+                            <div class="tab-pane fade" id="comments">
+                                <ul>
+                                    @foreach (var item in ViewBag.lstByComment)
+                                    {
+                                        string urlTitle = item.Article.Title;
+                                        urlTitle = urlTitle.ConvertToUnSign();
+                                        if (urlTitle.Length > 150)
+                                        {
+                                            urlTitle = urlTitle.Substring(0, 150);
+                                        }
+                                        <li>
+                                            <a href="@Url.Action("ArticleDetails", "Article", new { id = item.ArticleId, title = urlTitle })">
+                                                @{
+                                        string text = item.Content;
+                                        Regex reg = new Regex(@"</?img((\s+\w+(\s*=\s*(?:"".*?""|\'.*?\'|[^\'"">\s]+))?)+\s*|\s*)/?>");
+                                        string result = reg.Replace(text, string.Empty);
+                                        <span style="word-wrap:break-word;">@Html.Raw(HttpUtility.HtmlDecode(Html.GetSummary(result, 70) + "..."))</span>
+                                                }
+                                                <div class="agency-item">
+                                                    <span class="agency-contact">
+                                                        <i class="fa fa-pencil  circle-2 bg-blue white"></i>
+                                                    </span>
+                                                    @{
+                                        string tit = item.Article.Title;
+                                        if (tit.Length > 43)
+                                        {
+                                            <strong title="@tit">@tit.Substring(0, 40)<text>...</text></strong>
+                                        }
+                                        else
+                                        {
+                                            <strong>@tit</strong>
+                                        }
+                                                    }
+                                                </div>
+                                                <div class="clearfix"></div>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="s-widget">
+                <!-- Heading -->
+                <h5><i class="fa fa-tags color"></i>&nbsp; Tags</h5>
+                <!-- Widgets Content -->
+                <div class="widget-content">
+                    @foreach (var item in ViewBag.allTags)
+                    {
+                        <a href="@Url.Action("Index", "Article", new { tagId = item.Id })"><span class="label label-lblue">@item.Name</span></a>
+                    }
+                </div>
+            </div>
+            <!-- Social media widget -->
+            <div class="s-widget">
+                <h5><i class="fa fa-share color"></i>&nbsp; Chia sẻ</h5>
+                <!-- Widgets Content -->
+                <div class="widget-content brand-bg">
+                    <!-- Social Media Icons -->
+                    <div class="fb-share-button" data-href="https://localhost:44300/Article" data-layout="button_count">
+
+                    </div>
+                    <div class="fb-like"></div>
+                    <a href="#" class="google-plus"><i class="fa fa-google-plus square-3 rounded-1"></i></a>
+                    <a href="#" class="linkedin"><i class="fa fa-linkedin square-3 rounded-1"></i></a>
+                    <a href="#" class="pinterest"><i class="fa fa-pinterest square-3 rounded-1"></i></a>
+                    <a href="#" class="dropbox"><i class="fa fa-dropbox square-3 rounded-1"></i></a>
+                    <a href="#" class="foursquare"><i class="fa fa-foursquare square-3 rounded-1"></i></a>
+                    <a href="#" class="flickr"><i class="fa fa-flickr square-3 rounded-1"></i></a>
+                    <a href="#" class="github"><i class="fa fa-github square-3 rounded-1"></i></a>
+                    <a href="#" class="instagram"><i class="fa fa-instagram square-3 rounded-1"></i></a>
+                    <a href="#" class="skype"><i class="fa fa-skype square-3 rounded-1"></i></a>
+                    <a href="#" class="tumblr"><i class="fa fa-tumblr square-3 rounded-1"></i></a>
+                    <a href="#" class="dribbble"><i class="fa fa-dribbble square-3 rounded-1"></i></a>
+                    <a href="#" class="youtube"><i class="fa fa-youtube square-3 rounded-1"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="fb-root"></div>
+<meta property="og:url" content="https://localhost:44300/Article" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Ha Noi Handbook" />
+<meta property="og:description" content="Cẩm nang du lịch Hà Nội" />
+<meta property="og:image" content="http://media.lamsao.com//Thumbnail//Data//trangbh/12092014/ha_noi_ve_dem_400_276.jpg"><script>
+(function (d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/ja_JP/sdk.js#xfbml=1&version=v2.4&appId=1499264037063357";
+    fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+

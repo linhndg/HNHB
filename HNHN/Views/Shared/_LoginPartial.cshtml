@@ -1,6 +1,8 @@
 ﻿
 @using Microsoft.AspNet.Identity
+@*@model HNHB.Models.ExternalLoginListViewModel*@
 @model HNHB.Models.LoginViewModel
+
 @{
     ViewBag.Title = "Đăng nhập";
 }
@@ -63,6 +65,11 @@ else
                         <font size="2"><a href="@Url.Action("Register", "Account", null)" class="color">Đăng ký</a></font>
                     </div>
                     <input type="submit" class="btn btn-color btn-sm col-md-5" value="Đăng nhập" />
+                    @*<div class="col-md-4">
+                        <section id="socialLoginForm">
+                            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
+                        </section>
+                    </div>*@
                 </div>
               
             </div>

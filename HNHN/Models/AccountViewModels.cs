@@ -12,6 +12,7 @@ namespace HNHB.Models
 
     public class ExternalLoginListViewModel
     {
+       
     public class ForgotViewModel
     {
         [Required]
