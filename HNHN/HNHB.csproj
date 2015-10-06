@@ -340,6 +340,30 @@
     <Content Include="Content\dropzone\dropzone.min.js" />
     <Content Include="Content\dropzone\images\spritemap%402x.png" />
     <Content Include="Content\dropzone\images\spritemap.png" />
+    <Content Include="Content\emoji-picker-gh-pages\.gitignore" />
+    <Content Include="Content\emoji-picker-gh-pages\css\bootstrap.min.css" />
+    <Content Include="Content\emoji-picker-gh-pages\css\cover.css" />
+    <Content Include="Content\emoji-picker-gh-pages\index.html" />
+    <Content Include="Content\emoji-picker-gh-pages\js\bootstrap.min.js" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\css\emoji.css" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\css\nanoscroller.css" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\blank.gif" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\emoji_spritesheet_0.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\emoji_spritesheet_1.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\emoji_spritesheet_2.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\emoji_spritesheet_3.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\emoji_spritesheet_4.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\IconsetSmiles.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\IconsetSmiles_1x.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\IconsetW.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\img\IconsetW_1x.png" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\js\config.js" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\js\emoji-picker.js" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\js\jquery.emojiarea.js" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\js\nanoscroller.min.js" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\js\tether.min.js" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\js\util.js" />
+    <Content Include="Content\emoji-picker-gh-pages\screenshot.png" />
     <Content Include="Content\img\avatar\image_0_10426140_960617617285369_9158187274309939041_n.jpg" />
     <Content Include="Content\img\avatar\image_0_73273_773684942011_4_40639956_2125564_n.jpg" />
     <Content Include="Content\img\cau-song-Han-Da-Nang%281%29.jpg" />
@@ -2744,6 +2768,14 @@
       <DependentUpon>HNHB.edmx</DependentUpon>
       <LastGenOutput>HNHB.cs</LastGenOutput>
     </Content>
+    <Content Include="Content\emoji-picker-gh-pages\css\cover.css.map" />
+    <Content Include="Content\emoji-picker-gh-pages\css\cover.scss" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\css\emoji.css.map" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\js\emoji-picker.coffee" />
+    <Content Include="Content\emoji-picker-gh-pages\lib\js\emoji-picker.js.map" />
+    <Content Include="Content\emoji-picker-gh-pages\LICENSE" />
+    <Content Include="Content\emoji-picker-gh-pages\package.json" />
+    <Content Include="Content\emoji-picker-gh-pages\README.md" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -2802,6 +2834,9 @@
     <Content Include="Views\Account\_ChangePasswordPartial.cshtml" />
     <Content Include="Views\Account\_UsersAvatar.cshtml" />
     <Content Include="Views\Article\Index.cshtml" />
+    <Content Include="Views\Article\CreateArticle.cshtml" />
+    <Content Include="Views\Article\ArticleDetails.cshtml" />
+    <Content Include="Views\Article\ArCommentPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

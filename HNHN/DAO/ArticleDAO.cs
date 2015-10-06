@@ -32,6 +32,16 @@ namespace HNHB.DAO
             return db.AppliedTagArticles.Where(a => a.TagId == tagId).Select(a => a.ArticleId).Distinct().ToList();
            
         }
+        public List<Tag> ListTag()
+        {
+            return (from tag in db.Tags select tag).ToList();
+
+        }
+        public Article GetArtical(int? id = 0)
+        {
+            return (from a in db.Articles where a.isActive == true && a.Id == id select a).FirstOrDefault();
+        }
+
        
         
     }
