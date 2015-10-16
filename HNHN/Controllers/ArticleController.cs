@@ -156,6 +156,88 @@ namespace HNHB.Controllers
                            select cm).ToList().OrderByDescending(c => c.CreateDate);
             return PartialView("ArCommentPartial", comment);
         }
+         
+
+
+        [Authorize]
+        public ActionResult EditArticle(int? id)
+        {
+            if (!(db.Articles.Any(a => a.Id == id && a.isActive == true && a.UserId == User.Identity.GetUserId<int>()) || User.IsInRole("Administrator")))
+            {
+                return RedirectToAction("Error", "Home");
+            }
+            var arContent = db.Articles.Find(id);
+            ViewBag.LstTags = (from tag in db.Tags select tag).ToList();
+            return View(arContent);
+        }
+
+        [Authorize]
+        [HttpPost, ValidateInput(false)]
+        public ActionResult EditArticle(string articleId, string editorContent, string tagSelect, string stringTitle)
+        {
+            int id = Int32.Parse(articleId);
+            var appliedTagList = JsonConvert.DeserializeObject<string[]>(tagSelect);
+            if (ModelState.IsValid)
+            {
+                Article article = (from qt in db.Articles
+                                   where qt.Id == id && qt.isActive == true
+                                   select qt).FirstOrDefault();
+
+                article.Title = stringTitle;
+                while (editorContent.EndsWith("<br>"))
+                    editorContent = editorContent.Substring(0, editorContent.Length - 4);
+                article.Content = editorContent.Trim('\r', '\n', ' ');
+                article.CreateDate = DateTime.Now;
+                article.isActive = true;
+                //asking. = 0;
+
+                db.Entry(article).State = EntityState.Modified;
+                db.SaveChanges();
+
+                // Delete applied tags in question
+                var appliedTags = (from apTag in db.AppliedTagArticles
+                                   where apTag.ArticleId == id
+                                   select apTag).ToList();
+                foreach (var item in appliedTags)
+                {
+                    var delTag = db.AppliedTagArticles.Where(a => a.ArticleId == id
+                                                                        && a.TagId == item.TagId).Single();
+                    db.AppliedTagArticles.Remove(delTag);
+                }
+                db.SaveChanges();
+                //Save Applied tags
+                if (appliedTagList != null)
+                {
+                    foreach (var item in appliedTagList)
+                    {
+                        AppliedTagArticle appliedTag = new AppliedTagArticle();
+                        appliedTag.ArticleId = article.Id;
+                        appliedTag.TagId = Int32.Parse(item);
+                        //appliedTag.TaggingUser = WebSecurity.CurrentUserId;
+                        appliedTag.AppliedDate = DateTime.Now;
+                        db.AppliedTagArticles.Add(appliedTag);
+                        db.SaveChanges();
+                    }
+                }
+            }
+            return Json(id, JsonRequestBehavior.AllowGet);
+        }
+
+
+        [Authorize(Roles = "Administrator")]
+        public ActionResult Deactive(int? id)
+        {
+            if (id != null)
+            {
+                Article article = (from ar in db.Articles where ar.Id == id select ar).FirstOrDefault();
+                if (ModelState.IsValid)
+                {
+                    article.isActive = false;
+                    db.SaveChanges();
+                }
+            }
+            return RedirectToAction("Index", "Article");
+        }
 
     }
 }

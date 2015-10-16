@@ -169,9 +169,11 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ArticleController.cs" />
+    <Compile Include="Controllers\AskingController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="DAO\ArticleDAO.cs" />
+    <Compile Include="DAO\AskingDAO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -2837,6 +2839,12 @@
     <Content Include="Views\Article\CreateArticle.cshtml" />
     <Content Include="Views\Article\ArticleDetails.cshtml" />
     <Content Include="Views\Article\ArCommentPartial.cshtml" />
+    <Content Include="Views\Home\Error.cshtml" />
+    <Content Include="Views\Asking\Index.cshtml" />
+    <Content Include="Views\Asking\CreateQuestion.cshtml" />
+    <Content Include="Views\Asking\QuestionDetails.cshtml" />
+    <Content Include="Views\Asking\QtAnswerPartial.cshtml" />
+    <Content Include="Views\Asking\EditQuestion.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

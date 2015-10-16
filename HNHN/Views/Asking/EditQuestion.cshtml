@@ -1,0 +1,605 @@
+﻿@{
+    ViewBag.Title = "Chỉnh sửa câu hỏi";
+}
+@model HNHB.Models.Entities.Question
+<link href="~/Content/themes/ace/css/chosen.min.css" rel="stylesheet" />
+<link href="~/Content/themes/ace/css/chosen-bootstrap.css" rel="stylesheet" />
+<link href="~/Content/others/css/bootstrap-modal.css" rel="stylesheet" />
+<style>
+    .center, .align-center {
+        text-align: center !important;
+    }
+
+    .wysiwyg-editor {
+        max-height: 250px;
+        height: 250px;
+        background-color: #F7F8FA;
+        border-collapse: separate;
+        border: 1px solid #BBC0CA;
+        padding: 4px;
+        box-sizing: content-box;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        outline: 0;
+    }
+
+        .wysiwyg-editor:focus {
+            background-color: #FFF;
+        }
+
+    .wysiwyg-toolbar {
+        line-height: 33px;
+        margin: 0 !important;
+        position: relative;
+    }
+
+        .wysiwyg-toolbar .dropdown-menu {
+            text-align: left;
+        }
+
+        .wysiwyg-toolbar .btn-group {
+            float: none !important;
+            font-size: 0;
+        }
+
+            .wysiwyg-toolbar .btn-group > .btn {
+                float: none;
+                padding-left: 0;
+                padding-right: 0;
+                text-align: center;
+                margin-left: 1px;
+            }
+
+                .wysiwyg-toolbar .btn-group > .btn > .ace-icon:first-child {
+                    font-size: 14px;
+                    width: 25px;
+                    max-width: 25px;
+                    display: inline-block;
+                    border-width: 1px !important;
+                }
+
+                .wysiwyg-toolbar .btn-group > .btn.dropdown-toggle > .ace-icon:last-child {
+                    margin-right: 4px;
+                }
+
+    .wysiwyg-style1 .btn-group > .btn, .wysiwyg-style2 .btn-group > .btn, .wysiwyg-style1 .btn-group > .inline > .btn, .wysiwyg-style2 .btn-group > .inline > .btn {
+        margin: 0 !important;
+        background: #FFF !important;
+        border-width: 0 !important;
+        color: #ADB3BE !important;
+        text-shadow: none !important;
+    }
+
+        .wysiwyg-style1 .btn-group > .btn.active, .wysiwyg-style2 .btn-group > .btn.active, .wysiwyg-style1 .btn-group > .inline > .btn.active, .wysiwyg-style2 .btn-group > .inline > .btn.active {
+            color: #5B80CE !important;
+        }
+
+            .wysiwyg-style1 .btn-group > .btn.active:after, .wysiwyg-style2 .btn-group > .btn.active:after, .wysiwyg-style1 .btn-group > .inline > .btn.active:after, .wysiwyg-style2 .btn-group > .inline > .btn.active:after {
+                display: none;
+            }
+
+    .wysiwyg-style1 .btn-group, .wysiwyg-style2 .btn-group {
+        position: relative;
+    }
+
+        .wysiwyg-style1 .btn-group:after, .wysiwyg-style2 .btn-group:after {
+            display: block;
+            content: "";
+            position: absolute;
+            left: -2px;
+            top: 6px;
+            bottom: 6px;
+            width: 0;
+            max-width: 0;
+            border-left: 1px solid #E1E6EA;
+        }
+
+        .wysiwyg-style1 .btn-group:first-child:after, .wysiwyg-style2 .btn-group:first-child:after {
+            display: none;
+        }
+
+    .wysiwyg-style2 {
+        background-color: #E5E5E5;
+    }
+
+        .wysiwyg-style2 + .wysiwyg-editor {
+            border-color: #DDD;
+            background-color: #FFF;
+            border-top: none;
+        }
+
+        .wysiwyg-style2 .btn-group > .btn, .wysiwyg-style2 .btn-group > .inline > .btn {
+            margin: 0 1px 0 0 !important;
+            background: #FFF !important;
+            border: none !important;
+            color: #8D939E !important;
+            text-shadow: none !important;
+        }
+
+            .wysiwyg-style2 .btn-group > .btn.active, .wysiwyg-style2 .btn-group > .inline > .btn.active {
+                color: #FFF !important;
+                background: #6AAEDF !important;
+            }
+
+        .wysiwyg-style2 .btn-group:after {
+            display: none;
+        }
+
+    .wysiwyg-toolbar .btn-colorpicker {
+        width: 24px;
+        height: 24px;
+        position: relative;
+        background: #87B87F;
+        background: -moz-linear-gradient(top,#cf3e73 10%,#fff 20%,#2283c5 30%,#fff 40%,#87b87f 50%,#fff 60%,#ffb752 70%,#fff 80%,#d15b47 90%,#fff 100%);
+        background: -webkit-gradient(linear,left top,left bottom,color-stop(10%,#cf3e73),color-stop(20%,#fff),color-stop(30%,#2283c5),color-stop(40%,#fff),color-stop(50%,#87b87f),color-stop(60%,#fff),color-stop(70%,#ffb752),color-stop(80%,#fff),color-stop(90%,#d15b47),color-stop(100%,#fff));
+        background: -webkit-linear-gradient(top,#cf3e73 10%,#fff 20%,#2283c5 30%,#fff 40%,#87b87f 50%,#fff 60%,#ffb752 70%,#fff 80%,#d15b47 90%,#fff 100%);
+        background: -o-linear-gradient(top,#cf3e73 10%,#fff 20%,#2283c5 30%,#fff 40%,#87b87f 50%,#fff 60%,#ffb752 70%,#fff 80%,#d15b47 90%,#fff 100%);
+        background: -ms-linear-gradient(top,#cf3e73 10%,#fff 20%,#2283c5 30%,#fff 40%,#87b87f 50%,#fff 60%,#ffb752 70%,#fff 80%,#d15b47 90%,#fff 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#CF3E73', endColorstr='#FFB752', GradientType=0);
+        background: linear-gradient(top,#cf3e73 10%,#fff 20%,#2283c5 30%,#fff 40%,#87b87f 50%,#fff 60%,#ffb752 70%,#fff 80%,#d15b47 90%,#fff 100%);
+    }
+
+    .wysiwyg-toolbar .dropdown-colorpicker > .dropdown-menu {
+        top: auto;
+    }
+
+    .wysiwyg-toolbar input[type=file] {
+        position: fixed;
+        z-index: -10;
+        opacity: 0;
+        max-width: 0;
+        max-height: 0;
+        display: block;
+    }
+
+    .wysiwyg-toolbar .wysiwyg-choose-file {
+        display: inline-block;
+        width: auto;
+        margin: 4px auto 0;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+
+    .wysiwyg-toolbar .dropdown-menu input[type=text] {
+        margin-left: 8px;
+        margin-bottom: 0;
+    }
+
+        .wysiwyg-toolbar .dropdown-menu input[type=text].form-control {
+            min-width: 150px;
+        }
+
+    .wysiwyg-toolbar .dropdown-menu .btn {
+        margin-right: 8px;
+        margin-left: 8px;
+    }
+
+    .wysiwyg-style1 .btn-colorpicker {
+        width: 20px;
+        height: 20px;
+        margin-left: 4px;
+    }
+
+    @@media screen and (-webkit-min-device-pixel-ratio:0) {
+        .wysiwyg-editor img {
+            display: inline !important;
+        }
+
+        .wysiwyg-editor .ui-wrapper {
+            border: 1px dotted #D00;
+            overflow: visible !important;
+            display: inline-block !important;
+            vertical-align: middle;
+        }
+
+            .wysiwyg-editor .ui-wrapper:after {
+                content: "";
+                display: block;
+                position: absolute;
+                right: -3px;
+                bottom: -3px;
+                width: 7px;
+                height: 7px;
+                border: 1px solid #D00;
+                background-color: #FFF;
+                z-index: 1;
+            }
+    }
+
+    .dropdown-colorpicker > .dropdown-menu {
+        padding: 4px;
+        min-width: 130px;
+        max-width: 130px;
+        top: 80%;
+        left: -7px;
+    }
+
+        .dropdown-colorpicker > .dropdown-menu.dropdown-menu-right {
+            right: -7px;
+            left: auto;
+        }
+
+        .dropdown-colorpicker > .dropdown-menu > li {
+            display: block;
+            float: left;
+            width: 20px;
+            height: 20px;
+            margin: 2px;
+        }
+
+            .dropdown-colorpicker > .dropdown-menu > li > .colorpick-btn {
+                display: block;
+                width: 20px;
+                height: 20px;
+                margin: 0;
+                padding: 0;
+                border-radius: 0;
+                position: relative;
+                -webkit-transition: all ease .1s;
+                -o-transition: all ease .1s;
+                transition: all ease .1s;
+            }
+
+                .dropdown-colorpicker > .dropdown-menu > li > .colorpick-btn:hover {
+                    text-decoration: none;
+                    opacity: .8;
+                    filter: alpha(opacity=80);
+                    -webkit-transform: scale(1.08,1.08);
+                    -ms-transform: scale(1.08,1.08);
+                    -o-transform: scale(1.08,1.08);
+                    transform: scale(1.08,1.08);
+                }
+
+                .dropdown-colorpicker > .dropdown-menu > li > .colorpick-btn.selected:after {
+                    content: "\f00c";
+                    display: inline-block;
+                    font-family: FontAwesome;
+                    font-size: 11px;
+                    color: #FFF;
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                    line-height: 20px;
+                }
+
+    .btn-colorpicker {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background-color: #DDD;
+        vertical-align: middle;
+        border-radius: 0;
+    }
+
+    .modal-backdrop, .modal-backdrop.fade.in {
+        opacity: 0.7;
+        background: none repeat scroll 0% 0% #000;
+        height: 100%;
+        z-index: 10;
+        position: fixed;
+    }
+
+    .modal-scrollable {
+        z-index: 11;
+        overflow-y: hidden !important;
+    }
+</style>
+<script src="~/Content/others/js/bootstrap-modal.js"></script>
+<script src="~/Content/others/js/bootstrap-modalmanager.js"></script>
+<script src="~/Content/themes/ace/js/chosen.jquery.min.js"></script>
+<script src="~/Content/themes/ace/js/jquery.hotkeys.min.js"></script>
+<script src="~/Content/themes/ace/js/bootstrap-wysiwyg.min.js"></script>
+<script src="~/Content/themes/ace/js/ace.min.js"></script>
+<script src="~/Content/themes/ace/js/ace-elements.min.js"></script>
+<div class="container">
+    <div class="row" style="margin-top:0.5%">
+        <div class="col-md-12 col-sm-12">
+            <div class="well">
+                <h3>Chỉnh sửa câu hỏi</h3>
+                <hr />
+                <div class="row">
+                    <!-- Label -->
+                    <p for="Name" class="col-sm-2 control-label">
+                        Tiêu đề
+                    </p>
+                    <div class="col-sm-10">
+                        <!-- Input -->
+                        <input type="hidden" id="txtId" name="txtIds" class="form-control" value="@Model.Id" />
+                        <input type="text" id="txtTitle" name="txtTitle1" class="form-control" value="@Model.Title" />
+                    </div>
+                </div>
+                <div class="row">
+                    <!-- Label -->
+                    <p for="Content" class="col-sm-2 control-label">Nội dung</p>
+                    <div class="col-sm-10">
+                        <div class="wysiwyg-editor" id="editor1" style="max-height: 500px; overflow-y:auto">
+                            @Html.Raw(HttpUtility.HtmlDecode(Model.Content))
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:10px">
+                    <!-- Label -->
+                    <p for="Tag" class="col-sm-2 control-label">Tag</p>
+                    <div class="col-sm-7">
+                        <!-- Input -->
+                        <select multiple="" class="chosen-select form-control" id="form-field-select-4" data-placeholder="Chọn thẻ tag">
+                            <option value=""></option>
+                            @{
+                                foreach (var item in ViewBag.LstTags)
+                                {
+                                    var tag = Model.AppliedTagQuestions;
+                                    bool flag = false;
+                                    foreach (var items in tag)
+                                    {
+                                        if (item.Id == items.TagId)
+                                        {
+                                            flag = true;
+                                        }
+                                    }
+                                    if (flag)
+                                    {
+                                        <option selected="selected" value="@item.Id">@item.Name</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@item.Id">@item.Name</option>
+                                    }
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-3">
+                        <!-- Input -->
+                        <input id="update" type="button" value="Hoàn thành" class="btn btn-color" style="width:100%" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Có thể bạn quan tâm</h4>
+            </div>
+            <div class="modal-body">
+                <div id="testcq" class="row"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<script type="text/javascript">
+    var $assets = "assets";
+</script>
+<script>
+    $(function () {
+        $("#update").button().click(function () {
+            var formData = {
+                editorContent: $(editor1).html(),
+                tagSelect: JSON.stringify($('#form-field-select-4').val()),
+                stringTitle: $(txtTitle).val(),
+                questionId: $(txtId).val()
+            };
+
+            // Begin validate
+            $("#editor1").each(function () {
+                var $this = $(this);
+                $this.html($this.html().replace(/&nbsp;/g, ''));
+            });
+            var strContent = $(editor1).html();
+            var regex = /(<([^>]+)>)/ig;
+            txt = strContent.replace(regex, "");
+            var n = txt.length;
+            if ($.trim($('#txtTitle').val()) == "") {
+                $.amaran({
+                    content: {
+                        bgcolor: '#ED5441',
+                        color: '#fff',
+                        message: '<strong>Xin lỗi!</strong><p style="font-size:12px">Vui lòng nhập tiêu đề</p>'
+                    },
+                    theme: 'colorful',
+                    position: 'top right',
+                });
+            }
+            else if (n == 0) {
+                $.amaran({
+                    content: {
+                        bgcolor: '#ED5441',
+                        color: '#fff',
+                        message: '<strong>Xin lỗi!</strong><p style="font-size:12px">Vui lòng nhập nội dung</p>'
+                    },
+                    theme: 'colorful',
+                    position: 'top right',
+                });
+            }
+            else if (n < 30) {
+                $.amaran({
+                    content: {
+                        bgcolor: '#ED5441',
+                        color: '#fff',
+                        message: '<strong>Xin lỗi!</strong><p style="font-size:12px">Nội dung câu hỏi quá ngắn</p>'
+                    },
+                    theme: 'colorful',
+                    position: 'top right',
+                });
+            }
+            else {
+                $.ajax({
+                    type: "Post",
+                    url: '@Url.Action("EditQuestion", "Asking")',
+                    data: formData,
+                    dataType: "json",
+                    beforeSend: function () { $('body').modalmanager('loading'); },
+                    success: function (result) {
+                        $.amaran({
+                            content: {
+                                bgcolor: '#51D466',
+                                color: '#fff',
+                                message: '<strong>Xin cảm ơn!</strong><p style="font-size:12px">Câu hỏi của bạn đã chỉnh sửa thành công</p>'
+                            },
+                            theme: 'colorful',
+                            position: 'top right',
+                        });
+                        var url = "@Url.Action("QuestionDetails", "Asking")/";
+                        url = url + result;
+                        $(location).attr('href', url);
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+<!--inline scripts related to this page-->
+
+<script type="text/javascript">
+    $(function () {
+        function showErrorAlert() {
+            $.amaran({
+                content: {
+                    bgcolor: '#ED5441',
+                    color: '#fff',
+                    message: '<strong>Xin lỗi!</strong><p style="font-size:12px">File tải lên bị lỗi hoặc ko đúng định dạng</p>'
+                },
+                theme: 'colorful',
+                position: 'top right',
+            });
+        }
+
+        $('#editor1').ace_wysiwyg({
+            toolbar:
+            [
+                'font',
+                null,
+                'fontSize',
+                null,
+                { name: 'bold', className: 'btn-info' },
+                { name: 'italic', className: 'btn-info' },
+                { name: 'strikethrough', className: 'btn-info' },
+                { name: 'underline', className: 'btn-info' },
+                null,
+                { name: 'insertunorderedlist', className: 'btn-success' },
+                { name: 'insertorderedlist', className: 'btn-success' },
+                { name: 'outdent', className: 'btn-purple' },
+                { name: 'indent', className: 'btn-purple' },
+                null,
+                { name: 'justifyleft', className: 'btn-primary' },
+                { name: 'justifycenter', className: 'btn-primary' },
+                { name: 'justifyright', className: 'btn-primary' },
+                { name: 'justifyfull', className: 'btn-inverse' },
+                null,
+                { name: 'createLink', className: 'btn-pink' },
+                { name: 'unlink', className: 'btn-pink' },
+                null,
+                { name: 'insertImage', className: 'btn-success' },
+                null,
+                'foreColor',
+                null,
+                { name: 'undo', className: 'btn-grey' },
+                { name: 'redo', className: 'btn-grey' }
+            ],
+            speech_button: false,
+            'wysiwyg': {
+                fileUploadError: showErrorAlert
+            }
+        }).prev().addClass('wysiwyg-style2');
+
+        $('[data-toggle="buttons-radio"]').on('click', function (e) {
+            var target = $(e.target);
+            var which = parseInt($.trim(target.text()));
+            var toolbar = $('#editor1').prev().get(0);
+            if (which == 1 || which == 2 || which == 3) {
+                toolbar.className = toolbar.className.replace(/wysiwyg\-style(1|2)/g, '');
+                if (which == 1) $(toolbar).addClass('wysiwyg-style1');
+                else if (which == 2) $(toolbar).addClass('wysiwyg-style2');
+            }
+        });
+
+        if (typeof jQuery.ui !== 'undefined' && /applewebkit/.test(navigator.userAgent.toLowerCase())) {
+            var lastResizableImg = null;
+            function destroyResizable() {
+                if (lastResizableImg == null) return;
+                lastResizableImg.resizable("destroy");
+                lastResizableImg.removeData('resizable');
+                lastResizableImg = null;
+            }
+
+            var enableImageResize = function () {
+                $('.wysiwyg-editor')
+                .on('mousedown', function (e) {
+                    var target = $(e.target);
+                    if (e.target instanceof HTMLImageElement) {
+                        if (!target.data('resizable')) {
+                            target.resizable({
+                                aspectRatio: e.target.width / e.target.height,
+                            });
+                            target.data('resizable', true);
+
+                            if (lastResizableImg != null) {//disable previous resizable image
+                                lastResizableImg.resizable("destroy");
+                                lastResizableImg.removeData('resizable');
+                            }
+                            lastResizableImg = target;
+                        }
+                    }
+                })
+                .on('click', function (e) {
+                    if (lastResizableImg != null && !(e.target instanceof HTMLImageElement)) {
+                        destroyResizable();
+                    }
+                })
+                .on('keydown', function () {
+                    destroyResizable();
+                });
+            }
+            enableImageResize();
+        }
+    });
+</script>
+<!--Multiple chosen-->
+
+<script type="text/javascript">
+    $(function () {
+        $(".chosen-select").chosen({
+            no_results_text: 'Oops! Tag không tồn tại'
+        });
+    });
+    function CompareQuestion() {
+        var title = $.trim($('#txtTitle').val())
+        $.ajax({
+            url: '/Asking/QuestionSuggest',
+            type: 'POST',
+            dataType: 'json',
+            cache: false,
+            async: false,
+            data: { title: title },
+            success: function (data) {
+                if (data.success) {
+                    $('#suggestIco').show();
+                    $('[data-toggle="tooltip"]').tooltip('show');
+                    results = data.result;
+                    var html = "";
+                    $("#testcq").html(html);
+                    results.forEach(function (result, i) {
+                        html += '<div class="col-md-12"><a onclick="ShowQuestionDetails(' + result.Id + ')" style="cursor:pointer"><i class="fa fa-question circle-2 bg-blue white"></i> ' + result.Title + '</a><small> - ' + result.Content + '</small></div>';
+                        $("#testcq").html(html);
+                    });
+                }
+                else {
+                    $('[data-toggle="tooltip"]').tooltip('hide');
+                    $('#suggestIco').hide();
+                }
+            }
+        });
+    }
+    function ShowQuestionDetails(id) {
+        var url = "@Url.Action("QuestionDetails", "Asking")/" + id;
+        window.open(url);
+    }
+</script>

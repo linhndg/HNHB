@@ -1,4 +1,4 @@
-﻿@model HNHB.Models.Entities.Article
+﻿@model HNHB.Models.Entities.Question
 @using System.Text.RegularExpressions
 @using HNHB.HelperExtension
 @{
@@ -20,7 +20,7 @@
                         <div class="agency-item">
                             <span class="agency-contact"><i class="fa fa-calendar circle-2 bg-red white"></i>&nbsp; @Model.CreateDate.ToTimeAgo()</span> &nbsp;
                             <span class="agency-contact"><i class="fa fa-user circle-2 bg-blue white"></i>&nbsp; @Model.UserProfile.Fullname</span> &nbsp;
-                            <span class="agency-contact" id="numOfCmt"><i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; @Model.Comments.Where(c => c.isActive == true).Count() Bình luận</span>  &nbsp;
+                            <span class="agency-contact" id="numOfAns"><i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; @Model.Answers.Where(a => a.isActive == true).Count() Trả lời</span>  &nbsp;
                             <span class="agency-contact"><i class="fa fa-eye circle-2 bg-yellow white"></i>&nbsp; @Model.View Lượt xem</span>
 
                             @{
@@ -28,13 +28,12 @@
                                 {
                                     if (User.IsInRole("Administrator"))
                                     {
-                                        <a class="btn btn-sm btn-success" href="@Url.Action("EditArticle", "Article", new { id = Model.Id })"
-                                           style="float: right; color: white;">
+                                        <a class="btn btn-sm btn-success" href="@Url.Action("EditQuestion", "Asking", new { id = Model.Id })" style="float:right;color:white;">
                                             <i class="fa fa-pencil white"></i> Sửa
                                         </a>
                                         <a class="btn btn-danger btn-sm tooltip-info"
-                                           href="@Url.Action("Deactive", "Article", new { id = Model.Id })"
-                                           onclick="return confirm('Bạn có chắc muốn xóa bài viết này?')"
+                                           href="@Url.Action("Deactive", "Asking", new { id = Model.Id })"
+                                           onclick="return confirm('Bạn có chắc muốn xóa câu hỏi này?')"
                                            data-rel="tooltip" data-placement="bottom" title="Xóa"
                                            style="float:right;color:white">
                                             <i class="fa fa-trash-o white"></i> Xóa
@@ -42,8 +41,7 @@
                                     }
                                     else if (HttpContext.Current.User.Identity.Name.ToLower() == Model.UserProfile.UserName)
                                     {
-                                        <a class="btn btn-sm btn-success" href="@Url.Action("EditArticle", "Article", new { id = Model.Id })"
-                                           style="float:right;color:white;">
+                                        <a class="btn btn-sm btn-success" href="@Url.Action("EditQuestion", "Asking", new { id = Model.Id })" style="float:right;color:white;">
                                             <i class="fa fa-pencil white"></i> Sửa
                                         </a>
                                     }
@@ -59,14 +57,14 @@
             </div>
             <!-- Blog item ends -->
             <!-- Social media sharing section -->
-            @if (Model.AppliedTagArticles.Count > 0)
+            @if (Model.AppliedTagQuestions.Count > 0)
             {
                 <div class="well">
                     <span class="bold">Tags: </span>  &nbsp; &nbsp;
                     <span class="brand-bg">
-                        @foreach (var lsTag in Model.AppliedTagArticles)
+                        @foreach (var lsTag in Model.AppliedTagQuestions)
                         {
-                            <a href="@Url.Action("Index", "Article", new { tagId = lsTag.TagId })"><span class="label label-lblue">@lsTag.Tag.Name</span></a>
+                            <a href="@Url.Action("Index", "Asking", new { tagId = lsTag.TagId })"><span class="label label-lblue">@lsTag.Tag.Name</span></a>
                         }
                     </span>
                 </div>
@@ -74,7 +72,7 @@
             <!-- Comments section -->
             <div id="aranswer" class="blog-comments">
                 <!--Start block comment-->
-                @Html.Partial("ArCommentPartial", Model.Comments.Where(c => c.isActive == true).OrderByDescending(x => x.CreateDate))
+                @Html.Partial("QtAnswerPartial", Model.Answers.Where(a => a.isActive == true).OrderByDescending(x => x.CreateDate))
                 <!--End block comment-->
             </div>
 
@@ -84,10 +82,10 @@
                         <!-- Comment Form -->
                 <div class="well">
                     <!-- Heading -->
-                    <h4><i class="fa fa-comments color"></i>&nbsp; Bình luận</h4><!-- Form -->
+                    <h4><i class="fa fa-comments color"></i>&nbsp; Trả lời</h4><!-- Form -->
                     <hr>
                     <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
-                    @using (Ajax.BeginForm("ArticleComment", "Article", new AjaxOptions()
+                    @using (Ajax.BeginForm("AnswerQuestion", "Asking", new AjaxOptions()
                             {
                                 InsertionMode = InsertionMode.Replace,
                                 HttpMethod = "Post",
@@ -98,14 +96,14 @@
                             }, new { @class = "form", role = "form" }))
                     {
 
-                        <input id="txtArId" type="hidden" name="arId" value="@Model.Id" />
+                        <input id="txtQtId" type="hidden" name="qtId" value="@Model.Id" />
                         <div class="form-group">
-                            <textarea placeholder="Bình luận" rows="3" id="editor1" name="arContent" class="form-control"></textarea>
+                            <textarea placeholder="Trả lời" rows="3" id="editor1" name="qtContent" class="form-control"></textarea>
                         </div>
                                 <!-- Button -->
-                        <button id="btnSubmit" type="submit" class="btn btn-color">
+                        <button id="btnSubmit" type="submit" class="btn btn-color" onclick="submitContent()">
                             <i class="icon-ok bigger-110"></i>
-                            Bình luận
+                            Trả lời
                         </button><text>&nbsp;</text>
                         <button type="reset" class="btn btn-white">Nhập lại</button>
                     }
@@ -115,21 +113,23 @@
             {
                 <div class="alert alert-info alert-dismissable">
                     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    Hãy đăng nhập để bình luận về bài viết. Cám ơn sự đóng góp của bạn.
+                    Hãy đăng nhập để trả lời câu hỏi. Cám ơn sự đóng góp của bạn.
                 </div>
             }
         </div>
         <!-- Sidebar column -->
         <div class="col-md-4">
+
             <!-- Take action sidebar block -->
             <div class="sidebar">
+
                 <!-- Search Widget -->
                 <div class="s-widget">
                     <!-- Heading -->
                     <h5><i class="fa fa-search color"></i>&nbsp; Tìm kiếm</h5>
                     <!-- Widgets Content -->
                     <div class="widget-content search">
-                        @using (Html.BeginForm("Index", "Article"))
+                        @using (Html.BeginForm("Index", "Asking"))
                         {
                             <div class="input-group">
                                 <input class="form-control" type="text" id="txtSearch" name="key" value="@ViewBag.Key">
@@ -142,16 +142,16 @@
                 </div>
                 <div class="s-widget">
                     <!-- Heading -->
-                    <h5><i class="fa fa-pencil color"></i>&nbsp; Bài viết</h5>
+                    <h5><i class="fa fa-question color"></i>&nbsp; Câu hỏi</h5>
                     <!-- Widgets Content -->
                     <div class="widget-content tabs">
-                        <a class="btn btn-sm  btn-lblue" style="width:100%" href="@Url.Action("CreateArticle", "Article")">Bài viết mới</a>
+                        <a class="btn btn-sm  btn-lblue" style="width:100%" href="@Url.Action("CreateQuestion", "Asking")">Câu hỏi mới</a>
                         <div class="nav-tabs-two" style="margin-top:10px">
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs">
                                 <li class="active"><a href="#popular" data-toggle="tab">Xem nhiều</a></li>
                                 <li><a href="#recent" data-toggle="tab">Mới nhất</a></li>
-                                <li><a href="#comments" data-toggle="tab">Bình luận mới</a></li>
+                                <li><a href="#comments" data-toggle="tab">Trả lời mới</a></li>
                             </ul>
                             <!-- Tab content -->
                             <div class="tab-content">
@@ -167,7 +167,7 @@
                                                 urlTitle = urlTitle.Substring(0, 150);
                                             }
                                             <li>
-                                                <a href="@Url.Action("ArticleDetails", "Article", new { id = item.Id, title = urlTitle })">
+                                                <a href="@Url.Action("QuestionDetails", "Asking", new { id = item.Id, title = urlTitle })">
                                                     <!-- Item title -->
                                                     @{
                                             string tit = item.Title;
@@ -184,7 +184,7 @@
                                                         @{
                                             DateTime date = item.CreateDate;
                                             <div class="col-md-6">
-                                                <span class="agency-contact"><i class="fa fa-calendar circle-2 bg-red white"></i>&nbsp; @date.ToTimeAgo()</span>
+                                                <span class="agency-contact"><i class="fa fa-calendar circle-2 bg-red white"></i>&nbsp; @date.ToTimeAgo() &nbsp;</span>
                                             </div>
                                                             <div class="col-md-6">
                                                                 <span class="agency-contact"><i class="fa fa-eye circle-2 bg-yellow white"></i>&nbsp; @item.View Lượt xem</span>
@@ -209,7 +209,7 @@
                                                 urlTitle = urlTitle.Substring(0, 150);
                                             }
                                             <li>
-                                                <a href="@Url.Action("ArticleDetails", "Article", new { id = item.Id, title = urlTitle })">
+                                                <a href="@Url.Action("QuestionDetails", "Asking", new { id = item.Id, title = urlTitle })">
                                                     <!-- Item title -->
                                                     @{
                                             string tit = item.Title;
@@ -229,7 +229,7 @@
                                                 <span class="agency-contact"><i class="fa fa-calendar circle-2 bg-red white"></i>&nbsp; @date.ToTimeAgo() &nbsp;</span>
                                             </div>
                                                             <div class="col-md-6">
-                                                                <span class="agency-contact"><i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; @item.Comments.Count Bình luận</span>
+                                                                <span class="agency-contact"><i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; @item.Answers.Count Trả lời</span>
                                                             </div>
                                                         }
                                                     </div>
@@ -242,28 +242,28 @@
                                 <!-- Recent comments -->
                                 <div class="tab-pane fade" id="comments">
                                     <ul>
-                                        @foreach (var item in ViewBag.lstByComment)
+                                        @foreach (var item in ViewBag.lstByAnswer)
                                         {
-                                            string urlTitle = item.Article.Title;
+                                            string urlTitle = item.Question.Title;
                                             urlTitle = urlTitle.ConvertToUnSign();
                                             if (urlTitle.Length > 150)
                                             {
                                                 urlTitle = urlTitle.Substring(0, 150);
                                             }
                                             <li>
-                                                <a href="@Url.Action("ArticleDetails", "Article", new { id = item.ArticleId, title = urlTitle })">
+                                                <a href="@Url.Action("QuestionDetails", "Asking", new { id = item.QuestionId, title = urlTitle })">
                                                     @{
                                             string text = item.Content;
                                             Regex reg = new Regex(@"</?img((\s+\w+(\s*=\s*(?:"".*?""|\'.*?\'|[^\'"">\s]+))?)+\s*|\s*)/?>");
                                             string result = reg.Replace(text, string.Empty);
-                                            <span style="word-wrap:break-word;">@Html.Raw(HttpUtility.HtmlDecode(Html.GetSummary(result, 70) + "..."))</span>
+                                            <span>@Html.Raw(HttpUtility.HtmlDecode(Html.GetSummary(result, 80) + "..."))</span>
                                                     }
                                                     <div class="agency-item">
                                                         <span class="agency-contact">
-                                                            <i class="fa fa-pencil  circle-2 bg-blue white"></i>
+                                                            <i class="fa fa-question circle-2 bg-blue white"></i>
                                                         </span>
                                                         @{
-                                            string tit = item.Article.Title;
+                                            string tit = item.Question.Title;
                                             if (tit.Length > 43)
                                             {
                                                 <strong title="@tit">@tit.Substring(0, 40)<text>...</text></strong>
@@ -291,7 +291,7 @@
                     <div class="widget-content">
                         @foreach (var item in ViewBag.allTags)
                         {
-                            <a href="@Url.Action("Index", "Article", new { tagId = item.Id })"><span class="label label-lblue">@item.Name</span></a>
+                            <a href="@Url.Action("Index", "Asking", new { tagId = item.Id })"><span class="label label-lblue">@item.Name</span></a>
                         }
                     </div>
                 </div>
@@ -341,39 +341,39 @@
     </script>
 
     <script>
-        var num = @Html.Raw(Model.Comments.Where(c => c.isActive == true).Count());
-        function validateInput() {
-            var txtContent = document.getElementById('editor1').value;
-            if (txtContent.length < 10) {
-                //$('#btnSubmit').addClass("disabled");
-                $.amaran({
-                    content: {
-                        bgcolor: '#ED5441',
-                        color: '#fff',
-                        message: '<strong>Xin lỗi!</strong><p style="font-size:12px">Nội dung bình luận quá ngắn</p>'
-                    },
-                    theme: 'colorful',
-                    position: 'top right',
-                });
-                return false;
-            }
-            else {
-                return true;
-            }
+    var num = @Html.Raw(Model.Answers.Where(a => a.isActive == true).Count());
+    function validateInput() {
+        var txtContent = document.getElementById('editor1').value;
+        if (txtContent.length < 10) {
+            //$('#btnSubmit').addClass("disabled");
+            $.amaran({
+                content: {
+                    bgcolor: '#ED5441',
+                    color: '#fff',
+                    message: '<strong>Xin lỗi!</strong><p style="font-size:12px">Nội dung trả lời quá ngắn</p>'
+                },
+                theme: 'colorful',
+                position: 'top right',
+            });
+            return false;
         }
+        else {
+            return true;
+        }
+    }
 
 
-        function refreshInput() {
-            $('#editor1').val('');
-            num += 1;
-            var html = '<i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; ' + num + ' Bình luận';
-            $('#numOfCmt').html(html);
-        }
+    function refreshInput() {
+        $('#editor1').val('');
+        num += 1;
+        var html = '<i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; ' + num + ' Trả lời';
+        $('#numOfAns').html(html);
+    }
 
-        function updateNumOfCmt() {
-            num -= 1;
-            var html = '<i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; '+ num +' Bình luận';
-            $('#numOfCmt').html(html);
-        }
+    function updateNumOfAns() {
+        num -= 1;
+        var html = '<i class="fa fa-comments circle-2 bg-green white"></i>&nbsp; ' + num + ' Trả lời';
+        $('#numOfAns').html(html);
+    }
     </script>
 }

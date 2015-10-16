@@ -1,0 +1,239 @@
+﻿@model IEnumerable<HNHB.Models.Entities.Answer>
+@using HNHB.HelperExtension
+
+<h4><i class="fa fa-comments color"></i>&nbsp; @Model.Count() câu trả lời</h4>
+<hr />
+
+@if (Model.Count() == 0)
+{
+    <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <strong>Chưa có câu trả lời!</strong> Hãy trở thành người đầu tiên trả lời câu hỏi. Cám ơn sự đóng góp của bạn.
+    </div>
+}
+else
+{
+    foreach (var item in Model)
+    {
+        <div class="blog-comment-item" id="@item.Id">
+            <div class="comment-author-image">
+                @if (item.UserProfile.Avatar != null)
+                {
+                    <img alt="avatar" class="user" src="@Url.Content(item.UserProfile.Avatar)" style="max-width:60px;border-radius:5px" />
+                }
+                else
+                {
+                    <img alt="avatar" class="user" src="@Url.Content("~/Content/img/non-avatar.png")" style="max-width:60px;border-radius:5px" />
+                }
+            </div>
+            <div class="comment-details">
+                <!-- Name -->
+                <h5>
+                    @if (User.Identity.IsAuthenticated == true && User.IsInRole("Administrator"))
+                    {
+                        using (Ajax.BeginForm("RemoveAnswer", "Asking", new AjaxOptions()
+                            {
+                                InsertionMode = InsertionMode.Replace,
+                                HttpMethod = "Post",
+                                UpdateTargetId = "aranswer",
+                                OnSuccess = "updateNumOfAns"
+                            }, new { @class = "form", role = "form" }))
+                        {
+                            <input type="hidden" name="ansId" value="@item.Id" />
+                            <button class="close red" type="submit" style="opacity:1" title="Xóa câu trả lời">×</button>
+                        }
+                    }
+                    @item.UserProfile.Fullname <small>@item.CreateDate.ToTimeAgo()</small>
+                </h5>
+                <!-- Paragraph -->
+                <p style="word-wrap: break-word;">@item.Content</p>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    var isVote = (from v in item.Votes
+                                  where v.AnswerId == item.Id
+                                      && v.UserProfile.UserName == User.Identity.Name
+                                  select v).Sum(x => x.Value);
+                    <p>
+                        @if (isVote > 0)
+                        {
+                            <span title="Đánh giá cao" class="vote-up" id="aVoteUp_@item.Id" role="button" onclick="null" style="cursor:pointer">
+                                <span class="control">
+                                    <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                                </span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span title="Đánh giá cao" class="vote-up" id="aVoteUp_@item.Id" role="button" onclick="voteup(@item.Id)" style="cursor:pointer">
+                                <span class="control">
+                                    <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                                </span>
+                            </span>
+                        }
+
+
+                        @{
+                    var votes = (from v in item.Votes where v.AnswerId == item.Id select v).Sum(x => x.Value);
+                    <span id="voteValues_@item.Id" data-role="likes" resource="@item.Id" class="updatable count blue">@votes</span>
+                        }
+
+                        @if (isVote < 0)
+                        {
+                            <span id="aVoteDown_@item.Id" title="Đánh giá thấp" class="vote-down" role="button" onclick="null" style="cursor:pointer">
+                                <span class="control">
+                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                </span>
+                            </span>
+                        }
+                        else
+                        {
+                            <span id="aVoteDown_@item.Id" title="Đánh giá thấp" class="vote-down" role="button" onclick="votedown(@item.Id)" style="cursor:pointer">
+                                <span class="control">
+                                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                                </span>
+                            </span>
+                        }
+                    </p>
+                }
+                else
+                {
+                    <p>
+                        <span title="Đánh giá cao" class="vote-up" id="aVoteUp" role="button" style="cursor:pointer">
+                            <span class="control">
+                                <i class="fa fa-chevron-up" aria-hidden="true"></i>
+                            </span>
+                        </span>
+                        @{
+                    var votes = (from v in item.Votes where v.AnswerId == item.Id select v).Sum(x => x.Value);
+                    <span id="voteValues_@item.Id" data-role="likes" resource="@item.Id" class="updatable count blue">@votes</span>
+                        }
+                        <span title="Đánh giá thấp" class="vote-down" role="button" style="cursor:pointer">
+                            <span class="control">
+                                <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                            </span>
+                        </span>
+                    </p>
+                }
+            </div>
+        </div>
+    }
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <script>
+    var isVoting = false;
+    function voteup(_id) {
+        if (!isVoting) {
+            isVoting = true;
+            //$('#voteValues').text('100');
+            var votes = $('#voteValues_' + _id);
+            var asnId = $('#answer_' + _id);
+            var answerId = {
+                canswerId: _id
+                //stringCateId: $(ArCateId).val()
+            };
+            $.ajax({
+                url: "@Url.Action("VoteUp", "Asking")",
+                data: answerId,
+                type: "GET",
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                    votes.text(result);
+                    //$('#voteValues').text('100');
+                },
+                error: function (xhr, status) {
+                    votes.text('-10');
+                    //alert("Sorry, there was a problem!");
+                },
+                complete: function (xhr, status) {
+                    currentVote(_id);
+                }
+            });
+        }
+    };
+
+    function votedown(_id) {
+        if (!isVoting) {
+            isVoting = true;
+            //$('#voteValues').text('100');
+            var votes = $('#voteValues_' + _id);
+            var asnId = $('#answer_' + _id);
+            var answerId = {
+                canswerId: _id
+                //stringCateId: $(ArCateId).val()
+            };
+            $.ajax({
+                url: "@Url.Action("VoteDown", "Asking")",
+                data: answerId,
+                type: "GET",
+                dataType: "json",
+                async: false,
+                success: function (result) {
+                    votes.text(result);
+                    //$('#voteValues').text('100');
+                },
+                error: function (xhr, status) {
+                    //votes.text('-10');
+                    //alert("Sorry, there was a problem!");
+                },
+                complete: function (xhr, status) {
+                    currentVote(_id);
+                }
+            });
+        }
+    };
+
+    function currentVote(_id) {
+        var answerId = {
+            canswerId: _id
+        };
+        $.ajax({
+            url: "@Url.Action("CurrentUserVote", "Asking")",
+                data: answerId,
+                type: "GET",
+                dataType: "json",
+                success: function (result) {
+                    isDisable(_id, result);
+                },
+                error: function (xhr, status) {
+                    isDisable(_id, result);
+                },
+                complete: function (xhr, status) {
+                    isDisable(_id, result);
+                }
+            });
+        };
+
+
+        function isDisable(id, vote) {
+            var svoteup = document.getElementById("aVoteUp_" + id);
+            var svotedown = document.getElementById("aVoteDown_" + id);
+            var doVoteUp = function () {
+                voteup(id);
+            };
+            var doVoteDown = function () {
+                votedown(id);
+            };
+
+            if (vote > 0) {
+                //voteup.setAttribute("disabled", "disabled");
+                //votedown.removeAttribute("disabled");
+                svoteup.onclick = null;
+                svotedown.onclick = doVoteDown;
+            } else if (vote < 0) {
+                //voteup.removeAttribute("disabled");
+                //votedown.setAttribute("disabled", "disabled");
+                svotedown.onclick = null;
+                svoteup.onclick = doVoteUp;
+            }
+            else {
+                svoteup.onclick = doVoteUp;
+                svotedown.onclick = doVoteDown;
+            }
+            isVoting = false;
+        };
+    </script>
+
+
+}
