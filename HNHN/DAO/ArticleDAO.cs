@@ -42,6 +42,13 @@ namespace HNHB.DAO
             return (from a in db.Articles where a.isActive == true && a.Id == id select a).FirstOrDefault();
         }
 
+        public List<Comment> GetListComment(int arId)
+        {
+            return (from cm in db.Comments.Include("UserProfile")
+                    where cm.ArticleId == arId && cm.isActive == true
+                    select cm).OrderByDescending(c => c.CreateDate).ToList();
+        }
+
        
         
     }

@@ -1,0 +1,225 @@
+﻿@{
+    ViewBag.Title = "Calendar";
+}
+<link href="~/Content/jquery-ui/jquery-ui-1.11.2/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/Calendar/fullcalendar-2.3.1.css" rel="stylesheet" />
+<style>
+    .pac-container {
+        z-index: 1050;
+    }
+
+    .fc-event {
+        background-color: #3a87ad;
+        border: 1px solid #3a87ad;
+        border-radius: 3px;
+        display: block;
+        font-size: 1.05em;
+        font-weight: 400;
+        line-height: 1.5;
+        position: relative;
+    }
+</style>
+
+<script src="~/Content/jquery-ui/jquery-ui-1.11.2/jquery-ui.js"></script>
+<script src="~/Content/Calendar/moment.min.js"></script>
+<script src="~/Content/Calendar/fullcalendar-2.3.1.js"></script>
+<script src="~/Content/Calendar/vi.js"></script>
+
+
+<script>
+    $(document).ready(function () {
+        var sourceFullView = { url: '/Calendar/GetEvents/' };
+        var sourceSummaryView = { url: '/Calendar/GetSummary/' };
+        var CalLoading = true;
+
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: ''
+            },
+            defaultView: 'month',
+            editable: false,
+            eventLimit: true,
+            allDaySlot: false,
+            selectable: true,
+            slotMinutes: 15,
+            events: '/Calendar/GetEvents/',
+
+            eventClick: function (calEvent, jsEvent, view) {
+                $('#eventDetailsID').val(calEvent.id);
+                $('#evTitle').text(calEvent.title);
+                var dates = calEvent.estart;
+                $('#evDate').text(dates);
+                $('#evAddress').text(calEvent.address);
+                $('#evInfor').text(calEvent.description);
+                ShowEventDetail(calEvent.address);
+            },
+
+            viewRender: function (view, element) {
+
+                if (!CalLoading) {
+                    if (view.name == 'month') {
+                        $('#calendar').fullCalendar('removeEventSource', sourceFullView);
+                        $('#calendar').fullCalendar('removeEvents');
+                        $('#calendar').fullCalendar('addEventSource', sourceFullView);
+                    }
+                }
+            },
+            eventRender: function (event, element) {
+                if (element.hasClass("special"))
+                {
+                    element.find(".fc-title").prepend('&nbsp;<i class="fa fa-star fa-spin yellow"></i> ');
+                }
+            }
+        });
+        CalLoading = false;
+    });
+
+    $('#btnPopupClose').click(function () {
+        $('#popupEventDetail').modal('hide');
+    });
+
+    function loadDetails(id) {
+        var dataRow = {};
+        $.ajax({
+            type: 'POST',
+            url: "/Calendar/UpdateEvent",
+            dataType: "json",
+            contentType: "application/json",
+            data: JSON.stringify(dataRow)
+        });
+    }
+
+    function ShowEventDetail(address) {
+        $('#popupEventDetail').modal('show');
+        codeAddress(address);
+    }
+
+
+</script>
+<!-- Modal code -->
+<div class="modal fade" id="popupEventDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="map-canvas" style="height: 400px;"></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="well">
+                            <form id="EventFormDetail">
+                                <div class="row">
+                                    <input type="hidden" id="eventDetailsID">
+                                    <div class="form-group">
+                                        <!-- Label -->
+                                        <div class="col-sm-4">
+                                            <strong for="Name" class="pull-right">Tên địa điểm</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <!-- Input -->
+                                            <label id="evTitle"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <!-- Label -->
+                                        <div class="col-sm-4">
+                                            <strong for="DateTime" class="control-label pull-right">
+                                                Ngày
+                                            </strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p>
+                                                <span id="evDate"></span>
+                                                <span id="evTime"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <strong for="Address" class="control-label pull-right">Địa chỉ</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p>
+                                                <span id="evAddress"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <strong for="Address" class="control-label pull-right">Thông tin</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p>
+                                                <span id="evInfor"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+<!-- Modal code -->
+
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&language=vi&amp;libraries=places"></script>
+<script src="~/Scripts/jquery.geocomplete.js"></script>
+<script>
+    var map;
+    var marker;
+    var geocoder;
+    function InitializeMapCreate() {
+        var latlng = new google.maps.LatLng(21.0259405, 105.8262347);
+        var mapOptions = {
+            zoom: 13,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        google.maps.event.addListenerOnce(map, 'idle', function () {
+            google.maps.event.trigger(map, 'resize');
+            map.setCenter(latlng);
+        });
+    }
+    function InitializeMapDetail() {
+        geocoder = new google.maps.Geocoder();
+        var latlng = new google.maps.LatLng(21.0259405,105.8262347);
+        var mapOptions = {
+            zoom: 13,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    }
+    function codeAddress(address) {
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (marker != null) {
+                    marker.setMap(null);
+                }
+                marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location,
+                    animation: google.maps.Animation.DROP
+                });
+                google.maps.event.addListenerOnce(map, 'idle', function () {
+                    google.maps.event.trigger(map, 'resize');
+                    map.setZoom(15);
+                    map.panTo(results[0].geometry.location);
+                });
+            } else {
+                alert("Geocode was not successful for the following reason: " + status);
+            }
+        });
+    }
+    $('#popupEventDetail').on('show.bs.modal', function () {
+        map = null;
+        InitializeMapDetail();
+    })
+</script>
+<div id='calendar'></div>

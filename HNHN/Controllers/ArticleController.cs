@@ -19,20 +19,21 @@ namespace HNHB.Controllers
     public class ArticleController : Controller
     {
         Entities db = new Entities();
+        ArticleDAO ArticalDAO = new ArticleDAO();
         // GET: Article
         public ActionResult Index(int? tagId, string key)
         {
-            var article = new ArticleDAO().ListArticalByCreateDate();
+            var article = ArticalDAO.ListArticalByCreateDate();
             ViewBag.lstByView = (from v in db.Articles where v.isActive == true select v)
                 .ToList().OrderByDescending(v => v.View).Take(7);
             ViewBag.lstByDate = (from v in db.Articles where v.isActive == true select v)
                 .ToList().OrderByDescending(v => v.CreateDate).Take(7);
             ViewBag.lstByComment = (from v in db.Comments where v.Article.isActive == true && v.isActive == true select v)
                             .ToList().OrderByDescending(v => v.CreateDate).Take(7);
-            List<int> allTgs = new ArticleDAO().ListAllTag();
+            List<int> allTgs = ArticalDAO.ListAllTag();
             if (tagId != null)
             {
-                List<int> listId = new ArticleDAO().ListId(tagId) ;
+                List<int> listId = ArticalDAO.ListId(tagId);
                 article = article.Where(a => listId.Contains(a.Id)).ToList();
             }
             if (key != null)
@@ -47,7 +48,7 @@ namespace HNHB.Controllers
         [Authorize]
         public ActionResult CreateArticle()
         {
-            var lstTags = new ArticleDAO().ListTag();
+            var lstTags = ArticalDAO.ListTag();
             return View(lstTags);
         }
         [Authorize]
@@ -135,9 +136,8 @@ namespace HNHB.Controllers
                 db.SaveChanges();
             }
 
-            var comment = (from cm in db.Comments.Include("UserProfile")
-                           where cm.ArticleId == arId && cm.isActive == true
-                           select cm).ToList().OrderByDescending(c => c.CreateDate);
+
+            var comment = ArticalDAO.GetListComment(arId);
             return PartialView("ArCommentPartial", comment);
         }
 
@@ -162,10 +162,10 @@ namespace HNHB.Controllers
         [Authorize]
         public ActionResult EditArticle(int? id)
         {
-            if (!(db.Articles.Any(a => a.Id == id && a.isActive == true && a.UserId == User.Identity.GetUserId<int>()) || User.IsInRole("Administrator")))
-            {
-                return RedirectToAction("Error", "Home");
-            }
+            //if (!(db.Articles.Any(a => a.Id == id && a.isActive == true && a.UserId == User.Identity.GetUserId<int>())))
+            //{
+            //    return RedirectToAction("Error", "Home");
+            //}
             var arContent = db.Articles.Find(id);
             ViewBag.LstTags = (from tag in db.Tags select tag).ToList();
             return View(arContent);

@@ -1,0 +1,514 @@
+﻿@{
+    ViewBag.Title = "Calendar";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+<link href="~/Content/jquery-ui/jquery-ui-1.11.2/jquery-ui.css" rel="stylesheet" />
+<link href="~/Content/Calendar/fullcalendar-2.3.1.css" rel="stylesheet" />
+<link href="~/Content/Calendar/Loading.css" rel="stylesheet" />
+<style>
+    .pac-container {
+        z-index: 1050;
+    }
+
+    .fc-event {
+        background-color: #3a87ad;
+        border: 1px solid #3a87ad;
+        border-radius: 3px;
+        display: block;
+        font-size: 1.05em;
+        font-weight: 400;
+        line-height: 1.5;
+        position: relative;
+    }
+</style>
+
+<script src="~/Content/jquery-ui/jquery-ui-1.11.2/jquery-ui.js"></script>
+<script src="~/Content/Calendar/moment.min.js"></script>
+<script src="~/Content/Calendar/fullcalendar-2.3.1.js"></script>
+<script src="~/Content/Calendar/vi.js"></script>
+
+
+
+
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+
+            var sourceFullView = { url: '/Calendar/GetEvents/' };
+            var sourceSummaryView = { url: '/Calendar/GetSummary/' };
+            var CalLoading = true;
+
+            $('#calendar').fullCalendar({
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: ''
+                },
+                defaultView: 'month',
+                editable: true,
+                eventLimit: true,
+                allDaySlot: false,
+                selectable: true,
+                slotMinutes: 15,
+                events: '/Calendar/GetEvents/',
+
+                //Loading
+                loading: function (bool) {
+                    if (bool)
+                        $('#popuploading').show();
+                    else
+                        $('#popuploading').hide();
+                    //Possibly call you feed loader to add the next feed in line
+                },
+                //end loading
+
+                eventClick: function (calEvent, jsEvent, view) {
+                    //alert('You clicked on event id: ' + calEvent.id
+                    //    + "\nSpecial ID: " + calEvent.someKey
+                    //    + "\nAnd the title is: " + calEvent.title);
+                    $('#eventDetailsID').val(calEvent.id);
+                    $('#evTitle').text(calEvent.title);
+                    var dates = calEvent.estart;
+                    $('#evDate').text(dates);
+                    $('#evAddress').text(calEvent.address);
+                    $('#evInfor').text(calEvent.description);
+                    ShowEventDetail(calEvent.address);
+                },
+
+                eventDrop: function (event, dayDelta, minuteDelta, allDay, revertFunc) {
+                    if (confirm("Bạn có chắc thay đổi thời gian không?")) {
+                        UpdateEvent(event.id, event.start, event.end);
+                    }
+                    else {
+                        revertFunc();
+                    }
+                },
+
+                eventResize: function (event, dayDelta, minuteDelta, revertFunc) {
+
+                    if (confirm("Bạn có chắc thay đổi thời gian kết thúc không?")) {
+                        UpdateEvent(event.id, event.start, event.end);
+                    }
+                    else {
+                        revertFunc();
+                    }
+                },
+
+
+
+                dayClick: function (date, allDay, jsEvent, view) {
+                    $('#eventTitle').val("");
+                    //$('#eventDate').val($.fullCalendar.formatDate(date, 'dd/MM/yyyy'));
+                    $('#eventDate').val(date.format());
+                    //$('#eventTime').val($.fullCalendar.formatDate(date, 'HH:mm'));
+                    ShowEventPopup(date);
+                },
+
+                viewRender: function (view, element) {
+                    if (!CalLoading) {
+                        if (view.name == 'month') {
+                            $('#calendar').fullCalendar('removeEventSource', sourceFullView);
+                            $('#calendar').fullCalendar('removeEvents');
+                            $('#calendar').fullCalendar('addEventSource', sourceFullView);
+                        }
+                        else {
+                            //$('#calendar').fullCalendar('removeEventSource', sourceSummaryView);
+                            //$('#calendar').fullCalendar('removeEvents');
+                            //$('#calendar').fullCalendar('addEventSource', sourceFullView);
+                        }
+                    }
+                }
+
+            });
+
+            CalLoading = false;
+
+
+        });
+
+        $('#btnPopupCancel').click(function () {
+            ClearPopupFormValues();
+            $('#popupEventForm').modal('hide');
+        });
+
+        $('#btnPopupClose').click(function () {
+            $('#popupEventDetail').modal('hide');
+        });
+
+        $('#btnDelete').click(function () {
+            if (confirm("Bạn có chắc muốn xóa không?")) {
+                var id = $('#eventDetailsID').val();
+                DeleteEvent(id);
+                $('#calendar').fullCalendar('removeEvents', id);
+                $('#popupEventDetail').modal('hide');
+            }
+            else {
+                revertFunc();
+            }
+        });
+
+        $('#btnPopupSave').click(function () {
+
+            $('#popupEventForm').modal('hide');
+            var typeSymbol = getRadioVal(document.getElementById('EventForm'), 'symbol');
+
+            var dataRow = {
+                'Title': $('#eventTitle').val(),
+                'NewEventDate': $('#eventDate').val(),
+                'NewEventAddress': $('#eventAddress').val(),
+                'NewEventDescription': $('#eventDescription').val(),
+                'NewEventSTime': $('#eventSTime').val(),
+                'NewEventETime': $('#eventETime').val(),
+                'NewEventDuration': $('#eventDuration').val(),
+                'NewEventSymbol': typeSymbol,
+            }
+
+            ClearPopupFormValues();
+
+            $.ajax({
+                type: 'POST',
+                url: "/Calendar/SaveEvent",
+                data: dataRow,
+                success: function (response) {
+                    if (response == 'True') {
+                        $('#popupEventForm').hide();
+                        $('#modalbackdrop').hide();
+                        $('#calendar').fullCalendar('refetchEvents');
+                        alert('Đã thêm sự kiện mới!');
+                    }
+                    else {
+                        alert('Có lỗi xảy ra!');
+                    }
+                }
+            });
+        });
+
+        function loadDetails(id) {
+            var dataRow = {};
+            $.ajax({
+                type: 'POST',
+                url: "/Calendar/UpdateEvent",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(dataRow)
+            });
+        }
+
+        function getRadioVal(form, name) {
+            var val;
+            // get list of radio buttons with specified name
+            var radios = form.elements[name];
+
+            // loop through list of radio buttons
+            for (var i = 0, len = radios.length; i < len; i++) {
+                if (radios[i].checked) { // radio checked?
+                    val = radios[i].value; // if so, hold its value in val
+                    break; // and break out of for loop
+                }
+            }
+            return val; // return value of checked radio or undefined if none checked
+        }
+
+        function ShowEventPopup(date) {
+            ClearPopupFormValues();
+            $('#popupEventForm').modal('show');
+            $('#eventTitle').focus();
+        }
+
+        function ShowEventDetail(address) {
+            $('#popupEventDetail').modal('show');
+            codeAddress(address);
+
+        }
+
+        function ClearPopupFormValues() {
+            $('#eventID').val("");
+            $('#eventTitle').val("");
+            $('#eventAddress').val("");
+            $('#eventDescription').val("");
+            $("#r0").prop("checked", true);
+        }
+
+        function UpdateEvent(EventID, EventStart, EventEnd) {
+
+            var dataRow = {
+                'ID': EventID,
+                'NewEventStart': EventStart,
+                'NewEventEnd': EventEnd,
+                'IsDel': '1'
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/Calendar/UpdateEvent",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(dataRow)
+            });
+        }
+
+        function DeleteEvent(EventID) {
+
+            var dataRow = {
+                'id': EventID
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: "/Calendar/DeleteEvent",
+                dataType: "json",
+                contentType: "application/json",
+                data: JSON.stringify(dataRow)
+            });
+        }
+
+    </script>
+
+}
+
+
+<div class="container">
+    <div id='calendar' style="margin-top:1%;width: 90%;"></div>
+</div>
+
+<div id="popuploading" class="modal" style="margin-top: 20%; margin-left: 50%;">
+    <div class="modal-body">
+        <div id="circularG">
+            <div id="circularG_1" class="circularG">
+            </div>
+            <div id="circularG_2" class="circularG">
+            </div>
+            <div id="circularG_3" class="circularG">
+            </div>
+            <div id="circularG_4" class="circularG">
+            </div>
+            <div id="circularG_5" class="circularG">
+            </div>
+            <div id="circularG_6" class="circularG">
+            </div>
+            <div id="circularG_7" class="circularG">
+            </div>
+            <div id="circularG_8" class="circularG">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="popupEventDetail" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Thông tin chi tiết</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="map-canvas" style="height: 400px;"></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="well">
+                            <form id="EventFormDetail">
+                                <div class="row">
+                                    <input type="hidden" id="eventDetailsID">
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <strong for="Name" class="pull-right">Tên địa điểm</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <label id="evTitle"></label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <strong for="DateTime" class="control-label pull-right">
+                                                Ngày
+                                            </strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p>
+                                                <span id="evDate"></span>
+                                                <span id="evTime"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <strong for="Address" class="control-label pull-right">Địa chỉ</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p>
+                                                <span id="evAddress"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-4">
+                                            <strong for="Address" class="control-label pull-right">Thông tin</strong>
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <p>
+                                                <span id="evInfor"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnDelete" class="btn btn-danger" data-dismiss="modal">Xóa</button>
+                <button type="button" id="btnPopupClose" class="btn btn-grey">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="popupEventForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">Thêm sự kiện</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div id="map" class="map" style="height: 400px"></div>
+                    </div>
+                    <div class="col-sm-6">
+                        <form id="EventForm" class="form-horizontal">
+                            <input type="hidden" id="eventID">
+                            <div class="form-group">
+                                <label for="Name" class="col-sm-4 control-label">Tên sự kiện</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="eventTitle" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Name" class="col-sm-4 control-label">Ngày</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="eventDate" class="form-control" readonly="readonly">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Address" class="col-sm-4 control-label">Địa chỉ</label>
+                                <div class="col-sm-8">
+                                    <input type="text" id="eventAddress" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Description" class="col-sm-4 control-label">Mô tả thông tin</label>
+                                <div class="col-sm-8">
+                                    <textarea id="eventDescription" style="width:100%;resize:none"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="Icon" class="col-sm-4 control-label">Phân loại</label>
+                                <div class="col-sm-8" style="line-height: 36px;">
+                                    <div class="col-sm-6">
+                                        <label for="normal">
+                                            <input type="radio" id="r0" name="symbol" value="0" checked="checked" />
+                                            Bình thường
+                                        </label>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="special">
+                                            <input type="radio" id="r1" name="symbol" value="1" />
+                                            Đặc biệt
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnPopupCancel" class="btn btn-grey" data-dismiss="modal">Hủy</button>
+                <button type="button" id="btnPopupSave" class="btn btn-primary">Thêm mới</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&language=vi&amp;libraries=places"></script>
+<script src="~/Scripts/jquery.geocomplete.js"></script>
+<script>
+    var map;
+    var marker;
+    var geocoder;
+    function InitializeMapCreate() {
+        var latlng = new google.maps.LatLng(21.0259405,105.8262347);
+        var mapOptions = {
+            zoom: 13,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById('map'), mapOptions);
+        google.maps.event.addListenerOnce(map, 'idle', function () {
+            google.maps.event.trigger(map, 'resize');
+            map.setCenter(latlng);
+        });
+    }
+    function InitializeMapDetail() {
+        geocoder = new google.maps.Geocoder();
+        var latlng = new google.maps.LatLng(21.0259405,105.8262347);
+        var mapOptions = {
+            zoom: 13,
+            center: latlng,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    }
+    function codeAddress(address) {
+        geocoder.geocode({ 'address': address }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (marker != null) {
+                    marker.setMap(null);
+                }
+                marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location,
+                    animation: google.maps.Animation.DROP
+                });
+                google.maps.event.addListenerOnce(map, 'idle', function () {
+                    google.maps.event.trigger(map, 'resize');
+                    map.setZoom(15);
+                    map.panTo(results[0].geometry.location);
+                });
+            } else {
+                alert("Geocode was not successful for the following reason: " + status);
+            }
+        });
+    }
+    $("#eventAddress").geocomplete({
+        country: 'vn'
+    }).bind("geocode:result", function (event, result) {
+        if (marker != null) {
+            marker.setMap(null);
+        }
+        map.setZoom(15);
+        map.panTo(result.geometry.location);
+        marker = new google.maps.Marker({
+            map: map,
+            position: result.geometry.location,
+            animation: google.maps.Animation.DROP
+        });
+    });
+    $('#popupEventForm').on('show.bs.modal', function () {
+        map = null;
+        InitializeMapCreate();
+    })
+    $('#popupEventDetail').on('show.bs.modal', function () {
+        map = null;
+        InitializeMapDetail();
+    })
+</script>
+
+
+
+
+

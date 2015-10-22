@@ -1,0 +1,281 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+
+    <!-- bootstrap & fontawesome -->
+    <link rel="stylesheet" href="~/Content/themes/ace/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/Content/themes/brave/css/font-awesome.min.css" />
+
+    <!-- page specific plugin styles -->
+    <link href="~/Content/themes/ace/css/chosen.min.css" rel="stylesheet" />
+    <!-- text fonts -->
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400,300" />
+
+    <!-- ace styles -->
+    <link rel="stylesheet" href="~/Content/themes/ace/css/ace.min.css" class="ace-main-stylesheet" id="main-ace-style" />
+    <style>
+        * {
+            font-family: Verdana, Arial, FontAwesome, 'sans-serif' !important;
+        }
+    </style>
+    <script src="~/Content/themes/ace/js/jquery.min.js"></script>
+    <script src="~/Content/themes/ace/js/ace-extra.min.js"></script>
+    <script src="~/Content/themes/ace/js/jquery.validate.min.js"></script>
+</head>
+
+<body class="no-skin">
+    <div id="navbar" class="navbar navbar-default">
+        <script type="text/javascript">
+            try { ace.settings.check('navbar', 'fixed') } catch (e) { }
+        </script>
+
+        <div class="navbar-container" id="navbar-container">
+            <button type="button" class="navbar-toggle menu-toggler pull-left" id="menu-toggler" data-target="#sidebar">
+                <span class="sr-only">Toggle sidebar</span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+
+                <span class="icon-bar"></span>
+            </button>
+
+            <div class="navbar-header pull-left">
+                <a href="/Administrator/" class="navbar-brand">
+                    <small>
+                        <i class="fa fa-leaf"></i>
+                        Trang quản trị
+                    </small>
+                </a>
+            </div>
+
+            <div class="navbar-buttons navbar-header pull-right" role="navigation">
+                <ul class="nav ace-nav">
+                    <li class="light-blue">
+                        <a aria-expanded="false" data-toggle="dropdown" href="#" class="dropdown-toggle">
+                            @{Html.RenderAction("_UsersAvatar", "Account");}
+                            <span class="user-info">
+                                <small>Chào,</small>
+                                @User.Identity.Name
+                            </span>
+                            <i class="ace-icon fa fa-caret-down"></i>
+                        </a>
+                        <ul style="" class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                            <li>
+                                <a href="/Home/">
+                                    <i class="ace-icon fa fa-home"></i>
+                                    Trang chính
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/Account/Manage/">
+                                    <i class="ace-icon fa fa-user"></i>
+                                    Quản lý
+                                </a>
+                            </li>
+                            <li class="divider"></li>
+                            <li>
+                                <a href="javascript:document.getElementById('logoutForm').submit()">
+                                    <i class="ace-icon fa fa-power-off"></i>
+                                    Đăng xuất
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div><!-- /.navbar-container -->
+    </div>
+    @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
+        @Html.AntiForgeryToken()
+    }
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+            try { ace.settings.check('main-container', 'fixed') } catch (e) { }
+        </script>
+
+        <div id="sidebar" class="sidebar                  responsive">
+            <script type="text/javascript">
+                try { ace.settings.check('sidebar', 'fixed') } catch (e) { }
+            </script>
+
+            <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+             
+
+               
+            </div><!-- /.sidebar-shortcuts -->
+
+            <ul class="nav nav-list">
+                <li class="">
+                    <a href="@Url.Action("ManagePlace", "Administrator")">
+                        <i class="menu-icon fa fa-map-marker"></i>
+                        <span class="menu-text">
+                            Địa điểm
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("ManageArticle", "Administrator")">
+                        <i class="menu-icon fa fa-pencil"></i>
+                        <span class="menu-text">
+                            Bài viết
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("ManageCategory", "Administrator")">
+                        <i class="menu-icon fa fa-list"></i>
+                        <span class="menu-text">
+                            Phân loại
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("ManageUser", "Administrator")">
+                        <i class="menu-icon fa fa-user"></i>
+                        <span class="menu-text">
+                            Người dùng
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("ManageTag","Administrator")">
+                        <i class="menu-icon fa fa-tags"></i>
+                        <span class="menu-text">
+                            Tag
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("ManageCoordinate", "Administrator")">
+                        <i class="menu-icon fa fa-map-marker"></i>
+                        <span class="menu-text">
+                            Tọa độ
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("ManageRateCategory", "Administrator")">
+                        <i class="menu-icon fa fa-sort-numeric-desc"></i>
+                        <span class="menu-text">
+                            Chỉ tiêu đánh giá
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("ManageQuestion", "Administrator")">
+                        <i class="menu-icon fa fa-question "></i>
+                        <span class="menu-text">
+                            Câu hỏi
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("Index", "Calendar")">
+                        <i class="menu-icon fa fa-calendar "></i>
+                        <span class="menu-text">
+                            Lịch sự kiện
+                        </span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="@Url.Action("ManageVirtualTourist", "Administrator")">
+                        <i class="menu-icon fa fa-photo "></i>
+                        <span class="menu-text">
+                            Du lịch ảo
+                        </span>
+                    </a>
+                </li>
+             
+            </ul><!-- /.nav-list -->
+
+            <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+                <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+            </div>
+
+            <script type="text/javascript">
+                try { ace.settings.check('sidebar', 'collapsed') } catch (e) { }
+            </script>
+        </div>
+
+        <div class="main-content">
+            <div class="main-content-inner">
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <script type="text/javascript">
+                        try { ace.settings.check('breadcrumbs', 'fixed') } catch (e) { }
+                    </script>
+
+                    <ul class="breadcrumb"></ul><!-- /.breadcrumb -->
+
+                    <div class="nav-search" id="nav-search">
+                        <form class="form-search">
+                            <span class="input-icon">
+                                <input type="text" placeholder="Tìm kiếm..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
+                                <i class="ace-icon fa fa-search nav-search-icon"></i>
+                            </span>
+                        </form>
+                    </div><!-- /.nav-search -->
+                </div>
+
+                <div class="page-content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            @RenderSection("featured", required: false)
+                            <section class="content-wrapper main-content clear-fix">
+                                @RenderBody()
+                            </section>
+                            <!-- PAGE CONTENT ENDS -->
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                </div><!-- /.page-content -->
+            </div>
+        </div><!-- /.main-content -->
+
+
+        <a href="#" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+            <i class="ace-icon fa fa-angle-double-up icon-only bigger-110"></i>
+        </a>
+    </div><!-- /.main-container -->
+    <!-- basic scripts -->
+    <!--[if !IE]> -->
+    <!-- <![endif]-->
+    <!--[if IE]>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <![endif]-->
+    <!--[if !IE]> -->
+    <script type="text/javascript">
+        window.jQuery || document.write("<script src='~/Content/themes/ace/js/jquery.min.js'>" + "<" + "/script>");
+    </script>
+
+    <!-- <![endif]-->
+    <!--[if IE]>
+    <script type="text/javascript">
+     window.jQuery || document.write("<script src='~/Content/themes/ace/js/jquery1x.min.js'>"+"<"+"/script>");
+    </script>
+    <![endif]-->
+    <script type="text/javascript">
+        if ('ontouchstart' in document.documentElement) document.write("<script src='~/Content/themes/ace/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+    </script>
+    <script src="~/Content/themes/brave/js/bootstrap.min.js"></script>
+
+    <!-- page specific plugin scripts -->
+    <!-- ace scripts -->
+    <script src="~/Content/themes/ace/js/ace-elements.min.js"></script>
+    <script src="~/Content/themes/ace/js/ace.min.js"></script>
+
+    <!-- inline scripts related to this page -->
+    <script src="/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script src="/Scripts/jquery.validate.js"></script>
+    <script src="/Scripts/jquery.validate.unobtrusive.js"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

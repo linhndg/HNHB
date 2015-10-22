@@ -531,7 +531,8 @@ namespace HNHB.Controllers
 
         public ActionResult _UsersAvatar()
         {
-            ViewBag.Avatar = db.UserProfiles.Where(u => u.Id == User.Identity.GetUserId<int>()).FirstOrDefault().Avatar;
+            int CurrentId = User.Identity.GetUserId<int>();
+            ViewBag.Avatar = db.UserProfiles.Where(u => u.Id == CurrentId).FirstOrDefault().Avatar;
             return PartialView("_UsersAvatar");
         }
 
