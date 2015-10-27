@@ -24,7 +24,10 @@ namespace HNHB.Controllers
             //ViewBag.Ask = db.Questions.Where(q => q.isActive == true).OrderBy(q => q.CreateDate).Take(5).ToList();
             //ViewBag.Article = db.Articles.Where(q => q.isActive == true).OrderBy(q => q.View).Take(8).ToList();
             //return View(model);
-           
+            int CurrentId = User.Identity.GetUserId<int>();
+        
+
+            List<UserProfile> model = db.UserProfiles.Where(u => u.Id == CurrentId).ToList();
             return View();
         }
 

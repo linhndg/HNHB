@@ -2,8 +2,10 @@
     ViewBag.Title = "Trang chủ";
 }
 @model HNHB.Models.Entities.UserProfile
+@using Microsoft.AspNet.Identity
 @using System.Text.RegularExpressions
 @using HNHB.HelperExtension
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "Hà Nội Handbook";
@@ -31,7 +33,41 @@
         <li data-target="#bs-carousel-2" data-slide-to="3"></li>
         <li data-target="#bs-carousel-2" data-slide-to="4"></li>
     </ol>
+ 
+    @*<div class="col-md-3 col-sm-4 col-xs-4">
+         Image 
+        @if (Model.Avatar != null)
+        {
+            <img src="@Url.Content(Model.Avatar)" class="img-responsive img-thumbnail" alt="">
+        }
+        else
+        {
+            <img src="@Url.Content("~/Content/img/non-avatar.png")" class="img-responsive img-thumbnail" alt="">
+        }
+    </div>*@
+
     <!-- Slides. You can also add captions -->
+    <header>
+        <!--Start of Zopim Live Chat Script-->
+        <!--Start of Zopim Live Chat Script-->
+        <script type="text/javascript">
+            window.$zopim || (function (d, s) {
+                var z = $zopim = function (c) { z._.push(c) }, $ = z.s =
+                d.createElement(s), e = d.getElementsByTagName(s)[0]; z.set = function (o) {
+                    z.set.
+                    _.push(o)
+                }; z._ = []; z.set._ = []; $.async = !0; $.setAttribute("charset", "utf-8");
+                $.src = "//v2.zopim.com/?3QEydufhF52xklTX7Ed5u9oUViH2GMsC"; z.t = +new Date; $.
+                type = "text/javascript"; e.parentNode.insertBefore($, e)
+            })(document, "script");
+        </script>
+        <!--End of Zopim Live Chat Script-->
+        <script type="text/javascript">
+$zopim(function () {
+    $zopim.livechat.setLanguage('ja');
+});</script>
+     
+    </header>
     <div class="carousel-inner">
         <!-- Item, First item should have extra class "active" -->
         <div class="item active">
@@ -189,7 +225,21 @@
             </div>
         </div>
     </div>
+   
 </div>
+<!-- Place this tag where you want the Live Helper Plugin to render. -->
+<div id="lhc_status_container_page"></div>
+
+<!-- Place this tag after the Live Helper Plugin tag. -->
+<script type="text/javascript">
+    var zochatOptionsPage = {};
+    zochatOptionsPage.opt = {};
+    (function () {
+        var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+        po.src = 'https://linhndg.zochat.net/eng/chat/getstatusembed';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+    })();
+</script>
 <!-- Imageloaded -->
 <script src="~/Content/themes/brave/js/imagesloaded.min.js"></script>
 <!-- Isotope -->

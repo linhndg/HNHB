@@ -40,7 +40,7 @@ else
                             }, new { @class = "form", role = "form" }))
                         {
                             <input type="hidden" name="cmtId" value="@item.Id" />
-                            <button class="close red" type="submit" style="opacity:1" title="Xóa bình luận">×</button>
+              <button class="close red" type="submit" onclick="return confirm('Bạn muốn xóa bình luận này chứ?')"  style="opacity:1" title="Xóa bình luận">×</button>
                         }
                     }
                     @item.UserProfile.Fullname <small>@item.CreateDate.ToTimeAgo()</small>
