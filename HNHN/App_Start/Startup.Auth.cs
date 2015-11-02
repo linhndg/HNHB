@@ -30,7 +30,7 @@ namespace HNHB
                 {
                     OnValidateIdentity = SecurityStampValidator
                         .OnValidateIdentity<ApplicationUserManager, ApplicationUser, int>(
-                            validateInterval: TimeSpan.FromMinutes(30),
+                            validateInterval: TimeSpan.FromMinutes(20),
                             regenerateIdentityCallback: (manager, user) =>
                                 user.GenerateUserIdentityAsync(manager),
                             getUserIdCallback: (id) => (id.GetUserId<int>()))

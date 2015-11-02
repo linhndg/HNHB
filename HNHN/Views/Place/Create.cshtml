@@ -1,0 +1,409 @@
+﻿@model HNHB.Models.Entities.Place
+@{
+    ViewBag.Title = "Thêm địa điểm";
+}
+<!-- Styles -->
+<!-- Bootstrap CSS -->
+<link href="~/Content/themes/ace/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="~/Content/themes/ace/css/chosen.min.css" rel="stylesheet" />
+<link href="~/Content/themes/ace/css/chosen-bootstrap.css" rel="stylesheet" />
+<link href="~/Content/dropzone/css/dropzone.css" rel="stylesheet" />
+<link href="~/Content/themes/ace/css/dataTables.bootstrap.css" rel="stylesheet" />
+<script src="~/Content/themes/ace/js/dataTables/jquery.dataTables.min.js"></script>
+<script src="~/Content/themes/ace/js/dataTables/jquery.dataTables.bootstrap.min.js"></script>
+<script src="~/Content/others/js/accounting.js"></script>
+<style>
+    .dropzone .dz-default.dz-message {
+        display: none;
+    }
+
+    .dropzone-previews .dz-preview {
+        margin: 1.5%;
+    }
+
+    .dz-progress, .dz-remove {
+        width: 100px;
+    }
+
+    #previews {
+        min-height: 100px;
+        border: 2px dashed #CCC;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-right: 15px;
+        margin-left: 15px;
+        color: #CCC;
+    }
+
+        #previews h4 {
+            color: #CCC;
+            text-align: center;
+            line-height: 100px;
+        }
+</style>
+<div class="container">
+    <div class="row" style="margin-top:0.5%">
+      
+        <div class="col-md-7 col-sm-12">
+            <div class="well">
+                <h3>Thêm địa điểm</h3>
+                <text>Chia sẻ địa điểm của bạn cho mọi người</text>
+                <hr />
+                <!-- Heading -->
+                <div class="block-heading-two">
+                    <h3><span>Thông tin cơ bản</span></h3>
+                </div>
+                <!-- Form -->
+                <!-- Form Horizontal -->
+                @using (Html.BeginForm("Create", "Place", FormMethod.Post, new { enctype = "multipart/form-data", @class = "form-horizontal dropzone", role = "form", @id = "CreateForm", style = "background:none;border:none" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <h5>@Html.ValidationSummary(true, "", new { @class = "text-danger" })</h5>
+                    <!-- Form Group -->
+                    <div class="form-group">
+                        <!-- Label -->
+                        <label for="Name" class="col-sm-4 control-label">Tên địa điểm</label>
+                        <div class="col-sm-8">
+                            <!-- Input -->
+                            @Html.TextBoxFor(m => m.Name, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m =>  m.Name, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Address" class="col-sm-4 control-label">Địa chỉ</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Address, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="SubCategory" class="col-sm-4 control-label">Loại hình</label>
+                        <div class="col-sm-8">
+                            @Html.DropDownList("CategoryId")
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="SubCategory" class="col-sm-4 control-label"></label>
+                        <div class="col-sm-8">
+                            @Html.DropDownList("SubCategoryId")
+                            @Html.ValidationMessageFor(m => m.SubCategoryId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="District" class="col-sm-4 control-label">Quận/Huyện</label>
+                        <div class="col-sm-8">
+                            @Html.DropDownList("DistrictId")
+                            @Html.ValidationMessageFor(m => m.DistrictId, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="PhoneNumber" class="col-sm-4 control-label">Điện thoại</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.PhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Description" class="col-sm-4 control-label">Mô tả địa điểm</label>
+                        <div class="col-sm-8">
+                            @Html.TextAreaFor(m => m.Description, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+    <div class="form-group">
+        <label for="Description" class="col-sm-4 control-label">360 View</label>
+        <div class="col-sm-8">
+            @Html.TextAreaFor(m => m.Virtualtourist, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Virtualtourist, "", new { @class = "text-danger" })
+        </div>
+    </div>
+                    <!-- Heading -->
+                    <div class="block-heading-two">
+                        <h3><span>Thông tin khác</span></h3>
+                    </div>
+                    <div class="form-group">
+                        <label for="StartTime" class="col-sm-4 control-label">Giờ mở cửa</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.StartTime, new { @class = "form-control", @readonly = "readonly", style = "cursor: pointer" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="EndTime" class="col-sm-4 control-label">Giờ đóng cửa</label>
+                        <div class="col-sm-8">
+                            @Html.TextBoxFor(m => m.EndTime, new { @class = "form-control", @readonly = "readonly", style = "cursor: pointer" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="SelectedTagIds" class="col-sm-4 control-label">Tag</label>
+                        <div class="col-sm-8">
+                            @Html.ListBoxFor(m => m.SelectedTagIds, ViewBag.TagId as MultiSelectList)
+                        </div>
+                    </div>
+                    <!-- Heading -->
+                    @*<div class="form-group">
+                        <label for="Items" class="col-sm-4 control-label">Sản phẩm, dịch vụ, món ăn</label>
+                        <div class="col-sm-8">
+                            <div class="alert alert-info">
+                                Giới thiệu về sản phẩm, dịch vụ, món ăn của địa điểm.
+                                <a class="link-one" data-toggle="modal" data-target="#myModal" style="cursor:pointer;" onclick="CreateItemFormLoad()">
+                                    Thêm mới
+                                </a>
+                            </div>
+                        </div>
+                    </div>*@
+                    <!-- Heading -->
+                    <div class="block-heading-two">
+                        <h3><span>Hình ảnh</span></h3>
+                    </div>
+                    <div class="alert alert-info alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        Chỉ chấp nhận hình ảnh có kích thước tối đa 3MB, tối thiểu phải có 1 ảnh, tối đa được đăng 5 ảnh.
+                    </div>
+                    <div class="form-group">
+                        <div id="previews" class="dropzone-previews">
+                            <h4 id="noImage"><i class="fa fa-camera"></i> Thêm hình ảnh</h4>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-12">
+                            <!-- Buton -->
+                            <button type="submit" class="btn btn-color" style="width:100%">Thêm địa điểm</button>
+                        </div>
+                    </div>
+                    <div id="items"></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+@{Html.RenderAction("Create", "Item");}
+<!-- Javascript files -->
+<script src="~/Content/themes/ace/js/date-time/moment.min.js"></script>
+<script src="~/Content/themes/ace/js/date-time/bootstrap-datetimepicker.min.js"></script>
+<script src="~/Content/themes/ace/js/chosen.jquery.min.js"></script>
+<script src="~/Content/dropzone/dropzone.min.js"></script>
+<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false&language=vi&amp;libraries=places"></script>
+<script src="~/Scripts/jquery.geocomplete.js"></script>
+<script>
+    var oTable1;
+    var count = 0;
+    $(function () {
+        $("#Address").geocomplete({
+            country: 'vn'
+        });
+        $('#Address').attr('placeholder', '');
+        $('#SubCategoryId').attr('class', 'form-control');
+        $('#CategoryId').attr('class', 'form-control');
+        $('#DistrictId').attr('class', 'form-control');
+        $('#SelectedTagIds').attr('class', 'form-control chosen-select');
+        $('#SelectedTagIds').attr('data-placeholder', 'Chọn các thẻ có liên quan');
+        $('#Price').attr('data-val-number', 'Giá nguyên liệu phải là số');
+        $('#CategoryId').change(function () {
+            $.getJSON('/Place/GetSubCategories/' + $('#CategoryId').val(), function (data) {
+                var items = '';
+                $.each(data, function (i, sub) {
+                    items += "<option value='" + sub.Id + "'>" + sub.Name + "</option>";
+                });
+                $('#SubCategoryId').html(items);
+            });
+        });
+        $('#StartTime, #EndTime').datetimepicker({
+            format: 'HH:mm',
+            pickDate: false,
+            pickSeconds: false,
+            pick12HourFormat: false,
+            icons: {
+                time: "fa fa-clock-o",
+                date: "fa fa-calendar",
+                up: "fa fa-chevron-up",
+                down: "fa fa-chevron-down"
+            }
+        });
+        $('#SelectedTagIds').chosen({
+            no_results_text: 'Oops! Tag không tồn tại'
+        });
+        $('#SelectedTagIds_chosen').width('100%');
+        Dropzone.options.CreateForm = { // The camelized version of the ID of the form element
+
+            // The configuration we've talked about above
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 5,
+            maxFiles: 5,
+            maxFilesize: 3,
+            addRemoveLinks: true,
+            acceptedFiles: "image/*",
+            dictRemoveFile: "Xóa ảnh",
+            dictInvalidFileType: "Tập tin không phải là hình ảnh",
+            dictFileTooBig: "Dung lượng ảnh lớn hơn 3MB",
+            dictMaxFilesExceeded: "Số lượng ảnh tối đa là 5",
+            previewsContainer: "#previews",
+            clickable: '#previews',
+            // The setting up of the dropzone
+            init: function () {
+                var myDropzone = this;
+
+                // First change the button to actually tell Dropzone to process the queue.
+                this.element.querySelector("button[type=submit]").addEventListener("click", function (e) {
+                    // Make sure that the form isn't actually being sent.
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if ($('#CreateForm').valid()) {
+                        if (myDropzone.getQueuedFiles().length == 0) {
+                            $.amaran({
+                                content: {
+                                    bgcolor: '#ED5441',
+                                    color: '#fff',
+                                    message: '<strong>Xin lỗi!</strong><p style="font-size:12px">Vui lòng chọn một hình ảnh làm ảnh đại điện cho địa điểm</p>'
+                                },
+                                theme: 'colorful',
+                                position: 'top right',
+                            });
+                            return;
+                        }
+                        $(this).attr('disabled', 'disabled');
+                        $(".dz-remove").attr('style', 'display:none;');
+                        myDropzone.processQueue();
+                    }
+                });
+                this.on("removedfile", function () {
+                    if (this.getQueuedFiles().length == 0) {
+                        $('#noImage').attr('style', 'display:block;');
+                    }
+                });
+                this.on("addedfile", function () {
+                    if (this.getQueuedFiles().length == 0) {
+                        $('#noImage').attr('style', 'display:none;');
+                    }
+                });
+                // Listen to the sendingmultiple event. In this case, it's the sendingmultiple event instead
+                // of the sending event because uploadMultiple is set to true.
+                this.on("sendingmultiple", function () {
+                    // Gets triggered when the form is actually being sent.
+                    // Hide the success button or the complete form.
+                });
+                this.on("successmultiple", function (files, response) {
+                    // Gets triggered when the files have successfully been sent.
+                    // Redirect user or notify of success.
+                    if (response.isSuccess) {
+                        $.amaran({
+                            content: {
+                                bgcolor: '#51D466',
+                                color: '#fff',
+                                message: '<strong>Xin cảm ơn!</strong><p style="font-size:12px">Thêm địa điểm mới thành công</p>'
+                            },
+                            theme: 'colorful',
+                            position: 'top right',
+                        });
+                        window.location = '@Url.Action("Details", "Place")/' + response.id;
+                    }
+                    else {
+                        $.amaran({
+                            content: {
+                                bgcolor: '#ED5441',
+                                color: '#fff',
+                                message: '<strong>Xin lỗi!</strong><p style="font-size:12px">Đã có lỗi xảy ra</p>'
+                            },
+                            theme: 'colorful',
+                            position: 'top right',
+                        });
+                        window.location = '@Url.Action("Create", "Place")';
+                    }
+                });
+                this.on("errormultiple", function (files, response) {
+                    // Gets triggered when there was an error sending the files.
+                    // Maybe show form again, and notify user of error
+                });
+            }
+
+        }
+        oTable1 = $('#ItemTable').dataTable({
+            "aoColumns": [
+              true, true, { "bSortable": false, "sWidth": "5%" }
+            ],
+            //"pagingType": "simple",
+            //"pageLength": 4,
+            "scrollY": "142.25px",
+            "scrollCollapse": true,
+            "paging": false,
+            "bFilter": false,
+            "bLengthChange": false,
+            "bInfo": false
+        });
+    });
+    $.fn.resetValidation = function () {
+
+        var $form = this.closest('form');
+
+        //reset jQuery Validate's internals
+        $form.validate().resetForm();
+
+        //reset unobtrusive validation summary, if it exists
+        $form.find("[data-valmsg-summary=true]")
+            .removeClass("validation-summary-errors")
+            .addClass("validation-summary-valid")
+            .find("ul").empty();
+
+        //reset unobtrusive field level, if it exists
+        $form.find("[data-valmsg-replace]")
+            .removeClass("field-validation-error")
+            .addClass("field-validation-valid")
+            .empty();
+
+        $('#myModal').modal('hide');
+        return $form;
+    };
+    function CreateItemFormLoad() {
+        $('#ItemCreateForm').find("#Name").val("");
+        $('#ItemCreateForm').find("#Price").val("");
+    }
+    function addItem() {
+        if ($('#ItemCreateForm').valid()) {
+            if (count == 0) {
+                $('#noItem').hide();
+                $('#hasItem').show();
+            }
+            var name = $('#ItemCreateForm').find("#Name").val();
+            var price = $('#ItemCreateForm').find("#Price").val();
+            var fmPrice = accounting.formatMoney(price, "VND ", 0);
+            oTable1.fnAddData([
+                {
+                    "DT_RowId": "row_" + count,
+                    "0": name,
+                    "1": fmPrice,
+                    "2": '<center><i class="fa fa-trash-o red" style="cursor:pointer; font-size:16px;" onclick="deleteItem(' + count + ');"></i></center>'
+                }
+            ]);
+            $('#items').append("<input id='Items_" + count + "_Name' name='Items[" + count + "].Name' type='hidden' value='" + name + "'/>");
+            $('#items').append("<input id='Items_" + count + "_Price' name='Items[" + count + "].Price' type='hidden' value='" + price + "'/>");
+            count++;
+            CreateItemFormLoad();
+        }
+    }
+    function deleteItem(id) {
+        var id_row = "row_" + id;
+        var nRow = $('#ItemTable tbody tr[id=' + id_row + ']')[0];
+        oTable1.fnDeleteRow(nRow, null, true);
+        if (id < (count - 1)) {
+            var id_last_row = "row_" + (count - 1);
+            $('#ItemTable tbody tr[id=' + id_last_row + '] td:last-child').html('<center><i class="fa fa-trash-o red" style="cursor:pointer; font-size:16px;" onclick="deleteItem(' + id + ');"></i></center>');
+            $('#ItemTable tbody tr[id=' + id_last_row + ']').attr("id", id_row);
+            $('#Items_' + id + '_Name').val($('#Items_' + (count - 1) + '_Name').val());
+            $('#Items_' + id + '_Price').val($('#Items_' + (count - 1) + '_Price').val());
+            $('#Items_' + (count - 1) + '_Name').remove();
+            $('#Items_' + (count - 1) + '_Price').remove();
+        }
+        else {
+            $('#Items_' + id + '_Name').remove();
+            $('#Items_' + id + '_Price').remove();
+        }
+        count--;
+        if (count == 0) {
+            $('#noItem').show();
+            $('#hasItem').hide();
+        }
+    }
+</script>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

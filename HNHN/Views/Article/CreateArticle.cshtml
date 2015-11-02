@@ -305,7 +305,7 @@
                     <p for="Name" class="col-sm-2 control-label">Tiêu đề</p>
                     <div class="col-sm-10">
                         <!-- Input -->
-                        <input type="text" id="txtTitle" name="txtTitle1" class="form-control" autofocus />
+                        <input type="text" id="txtTitle" name="txtTitle1" class="form-control" maxlength="250" autofocus />
                     </div>
                 </div>
                 <div class="row">
@@ -313,17 +313,8 @@
                     <p for="Content" class="col-sm-2 control-label">Nội dung</p>
                     <div class="col-sm-10">
                         <div class="wysiwyg-editor" id="editor1" style="max-height: 500px; overflow-y:auto"></div>
-                        <textarea name="editor2" id="editor2" rows="10" cols="80">
-                            This is my textarea to be replaced with CKEditor.
-                        </textarea>
-                        <script>
-
-    var textarea = document.body.appendChild( document.createElement( 'textarea' ) );
-    CKEDITOR.replace('editor2', {
-        language: 'ja',
-        uiColor: '#9AB8F3'
-    });
-    </script>
+                       
+                  
     </div>
 </div>
 <div class="row" style="margin-top:10px">
@@ -392,7 +383,7 @@ var $assets = "assets";
                     position: 'top right',
                 });
             }
-            else if (n < 30) {
+            else if (n < 150) {
                 $.amaran({
                     content: {
                         bgcolor: '#ED5441',

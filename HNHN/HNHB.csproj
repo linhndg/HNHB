@@ -61,6 +61,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Device" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
@@ -183,10 +184,13 @@
     <Compile Include="Controllers\AskingController.cs" />
     <Compile Include="Controllers\CalendarController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\PlaceController.cs" />
     <Compile Include="DAO\ArticleDAO.cs" />
     <Compile Include="DAO\AskingDAO.cs" />
     <Compile Include="DAO\CalendarDAO.cs" />
+    <Compile Include="DAO\PlaceDAO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -299,6 +303,7 @@
     </Compile>
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\PlaceModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -2876,6 +2881,9 @@
     <Content Include="Views\Administrator\ManageVirtualTourist.cshtml" />
     <Content Include="Views\Administrator\ManageTag.cshtml" />
     <Content Include="Views\Administrator\TagUpdate.cshtml" />
+    <Content Include="Views\Place\Create.cshtml" />
+    <Content Include="Views\Item\Create.cshtml" />
+    <Content Include="Views\Place\VirtualTourist.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
