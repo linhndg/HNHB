@@ -46,6 +46,7 @@ namespace HNHB.Controllers
         }
         [HttpGet]
         [Authorize]
+        // Create Artical
         public ActionResult CreateArticle()
         {
             var lstTags = ArticalDAO.ListTag();
@@ -89,6 +90,7 @@ namespace HNHB.Controllers
             }
             return Json(arId, JsonRequestBehavior.AllowGet);
         }
+        // View Artical Details
         public ActionResult ArticleDetails(int? id = 0)
         {
 
@@ -119,6 +121,8 @@ namespace HNHB.Controllers
             }
             return RedirectToAction("Error", "Home");
         }
+
+        // Article comment using Ajax
         [Authorize]
         [HttpPost, ValidateInput(false)]
         public ActionResult ArticleComment(string arContent, int arId = 0)
@@ -140,7 +144,7 @@ namespace HNHB.Controllers
             var comment = ArticalDAO.GetListComment(arId);
             return PartialView("ArCommentPartial", comment);
         }
-
+        // Remove Comment by admin
         [Authorize(Roles = "Administrator")]
         public ActionResult RemoveComment(int cmtId)
         {
@@ -158,7 +162,7 @@ namespace HNHB.Controllers
         }
          
 
-
+        // Edit artical
         [Authorize]
         public ActionResult EditArticle(int? id)
         {
@@ -223,7 +227,7 @@ namespace HNHB.Controllers
             return Json(id, JsonRequestBehavior.AllowGet);
         }
 
-
+        //Deactive artical
         [Authorize(Roles = "Administrator")]
         public ActionResult Deactive(int? id)
         {

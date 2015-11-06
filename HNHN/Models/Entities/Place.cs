@@ -12,10 +12,14 @@ namespace HNHB.Models.Entities
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
-    
+    using FluentValidation;
+    using System.Web.Mvc;
+
+   
     public partial class Place
     {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+       
         public Place()
         {
             this.AppliedTagPlaces = new HashSet<AppliedTagPlace>();
@@ -28,6 +32,7 @@ namespace HNHB.Models.Entities
 
         public int Id { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập tên địa điểm")]
+        [Remote("IsNameAvailble", "Place", ErrorMessage = "Name Already Exist.")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Vui lòng nhập địa chỉ cụ thể")]
         public string Address { get; set; }
@@ -65,4 +70,5 @@ namespace HNHB.Models.Entities
         public virtual ICollection<Review> Reviews { get; set; }
         public virtual ICollection<int> SelectedTagIds { get; set; }
     }
+
 }

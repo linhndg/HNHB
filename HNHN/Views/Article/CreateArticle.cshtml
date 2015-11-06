@@ -312,7 +312,7 @@
                     <!-- Label -->
                     <p for="Content" class="col-sm-2 control-label">Nội dung</p>
                     <div class="col-sm-10">
-                        <div class="wysiwyg-editor" id="editor1" style="max-height: 500px; overflow-y:auto"></div>
+                        <div class="wysiwyg-editor" id="editor1" style="max-height: 500px; overflow-y:auto" onkeypress="onTestChange();"></div>
                        
                   
     </div>
@@ -342,6 +342,21 @@
 <script type="text/javascript">
 var $assets = "assets";
                         </script>
+<script>
+    function onTestChange() {
+        var key = window.event.keyCode;
+
+        // If the user has pressed enter
+        if (key == 13) {
+            document.getElementById("editor1").value = document.getElementById("editor1").value + "\n*";
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+</script>
+
 
 <script>
     $(function () {

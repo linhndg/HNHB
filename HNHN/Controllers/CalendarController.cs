@@ -25,7 +25,9 @@ namespace HNHB.Controllers
    
         public class CalendarController : Controller
         {
-            Entities ent = new Entities();           
+            //Get database
+            Entities ent = new Entities();          
+            //Get contructor CalendarDAO
             CalendarDAO CalendarDAO = new CalendarDAO();
             [Authorize(Roles = "Administrator")]
             public ActionResult Index()
@@ -37,14 +39,14 @@ namespace HNHB.Controllers
             {
                 return View();
             }
-
+            //Update Event
             [Authorize(Roles = "Administrator")]
             public void UpdateEvent(int id, string NewEventStart, string NewEventEnd)
             {
                 CalendarDAO.UpdateEvents(id, NewEventStart, NewEventEnd);
                 
             }
-
+            //Delete Event
             [Authorize(Roles = "Administrator")]
             public void DeleteEvent(int id)
             {
@@ -61,7 +63,7 @@ namespace HNHB.Controllers
                 return CreateNewEvent(Title, NewEventDate, NewEventAddress, NewEventDescription,
                     NewEventSTime, NewEventETime, NewEventDuration, symbol);
             }
-
+            // Get data of Event
             public JsonResult GetEvents(DateTime start, DateTime end)
             {
                 var ApptListForDate = CalendarDAO.LoadAllEventsInDateRange(start, end);

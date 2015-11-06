@@ -25,7 +25,7 @@ namespace HNHB.Controllers
         {
             return PartialView();
         }
-
+        // Insert Item to database
         [HttpPost]
         public ActionResult AddItem(string name, double price, int placeId)
         {
@@ -40,7 +40,7 @@ namespace HNHB.Controllers
             db.SaveChanges();
             return Json(new { Id = item.Id });
         }
-
+        // Delete item
         [HttpPost]
         public ActionResult RemoveItem(int id)
         {

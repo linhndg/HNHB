@@ -24,6 +24,7 @@ namespace HNHB.Controllers
     
     public class AskingController : Controller
     {
+        // Get database
         Entities db = new Entities();
         AskingDAO AskingDAO = new AskingDAO();
         // GET: Asking
@@ -57,7 +58,7 @@ namespace HNHB.Controllers
             var lstTags = (from tag in db.Tags select tag).ToList();
             return View(lstTags);
         }
-
+        // Create Question
         [Authorize]
         [HttpPost, ValidateInput(false)]
         public ActionResult CreateQuestion(string editorContent, string tagSelect, string stringTitle)
@@ -98,108 +99,7 @@ namespace HNHB.Controllers
           
             return Json(ptId, JsonRequestBehavior.AllowGet);
         }
-        //#region[SendSMS]
-        ////Ham gui tin nhan
-        //public void SendSMSforPlace(String QuestionId)
-        //{
-        //    int QuesId = int.Parse(QuestionId);
-        //    List<AppliedTagPlace> listTagplace = new List<AppliedTagPlace>();
-        //    List<String> listPlace = new List<String>(); // tao list chua tat ca idplace co tagId giong tagid ben Tagquestion
-        //    var tagIdQuestion = (from quesTag in db.AppliedTagQuestions where quesTag.QuestionId == QuesId select quesTag).ToList();//lay tat ca cac tag cua questionid truyen vao
-        //    var AppTagPlace = (from apptag in db.AppliedTagPlaces select apptag).ToList();//lay tat ca cac dia diem chua tag
-        //    for (int j = 0; j < tagIdQuestion.Count(); j++)//Cac tagId co trong TagQuestion cua question
-        //    {
-        //        int tagIDquestionDetail = tagIdQuestion[j].TagId;
-        //        for (int i = 0; i < AppTagPlace.Count(); i++)
-        //        {
-
-        //            var tp2 = (from apptag2 in db.AppliedTagPlaces select apptag2).ToList();
-        //            if (tp2[i].TagId == tagIDquestionDetail)
-        //            {
-        //                String placeid = tp2[i].PlaceId.ToString();
-        //                listPlace.Add(placeid);
-        //            }
-
-        //        }
-        //    }
-        //    //Sap xep theo tu tu giam gian so lan xuat hien , gop cac phan tu giong nhau
-        //    listPlace = listPlace.GroupBy(i => i).OrderByDescending(g => g.Count()).Select(g => g.Key).ToList();
-        //    //Tu cac placeId , lay phonenumber trong bang Place
-        //    //Thu hien vong lap gui Sms cac phonenumber of Place
-        //    for (int i = 0; i < 1; i++) //1 phone
-        //    {
-        //        var placeId = int.Parse(listPlace[i]);
-        //        //Lay dia diem
-        //        var phoneplace = (from phonepla in db.Places where phonepla.Id == placeId select phonepla).SingleOrDefault();
-        //        //Noi Dung tin nhan can gui.
-        //        string contentString = "Ban co 1 cau hoi lien quan den cua hang";
-        //        contentString += "\n Truy cap vao: DNIYH.com/Asking/QuestionDetails/" + QuestionId.ToString();
-        //        contentString += " de xem thong tin chi tiet";
-        //        //Goi API SMS truyen vao so dien thoai va noi dung tin nhan
-        //        SendSMS(phoneplace.PhoneNumber, contentString);
-        //    }
-
-        //}
-        ////API gui sms
-        //public void SendSMS(string phone, string message)
-        //{
-        //    string url = "http://api.esms.vn/MainService.svc/xml/SendMultipleMessage_V2/";
-        //    // declare ascii encoding
-        //    ASCIIEncoding encoding = new ASCIIEncoding();
-        //    string strResult = string.Empty;
-        //    string customers = "";
-
-        //    customers = customers + @"<CUSTOMER>"
-        //                    + "<PHONE>" + phone + "</PHONE>"
-        //                    + "</CUSTOMER>";
-
-        //    string SampleXml = @"<RQST>"
-        //                        + "<APIKEY>" + APIKey + "</APIKEY>"
-        //                        + "<SECRETKEY>" + SecretKey + "</SECRETKEY>"
-        //                        + "<ISFLASH>0</ISFLASH>"
-        //                        + "<SMSTYPE>7</SMSTYPE>"
-        //                        + "<CONTENT>" + message + "</CONTENT>"
-        //                        + "<CONTACTS>" + customers + "</CONTACTS>"
-
-
-        //    + "</RQST>";
-        //    string postData = SampleXml.Trim().ToString();
-        //    // convert xmlstring to byte using ascii encoding
-        //    byte[] data = encoding.GetBytes(postData);
-        //    // declare httpwebrequet wrt url defined above
-        //    HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(url);
-        //    // set method as post
-        //    webrequest.Method = "POST";
-        //    webrequest.Timeout = 500000;
-        //    // set content type
-        //    webrequest.ContentType = "application/x-www-form-urlencoded";
-        //    // set content length
-        //    webrequest.ContentLength = data.Length;
-        //    // get stream data out of webrequest object
-        //    Stream newStream = webrequest.GetRequestStream();
-        //    newStream.Write(data, 0, data.Length);
-        //    newStream.Close();
-        //    // declare & read response from service
-        //    HttpWebResponse webresponse = (HttpWebResponse)webrequest.GetResponse();
-
-        //    // set utf8 encoding
-        //    Encoding enc = System.Text.Encoding.GetEncoding("utf-8");
-        //    // read response stream from response object
-        //    StreamReader loResponseStream =
-        //        new StreamReader(webresponse.GetResponseStream(), enc);
-        //    // read string from stream data
-        //    strResult = loResponseStream.ReadToEnd();
-        //    // close the stream object
-        //    loResponseStream.Close();
-        //    // close the response object
-        //    webresponse.Close();
-        //    // below steps remove unwanted data from response string
-        //    strResult = strResult.Replace("</string>", "");
-        //}
-
-        //#endregion
-
-
+     // View Detail of question
         public ActionResult QuestionDetails(int? id = 0)
         {
             if (id == 0)
@@ -225,7 +125,7 @@ namespace HNHB.Controllers
 
             return View(questionContent);
         }
-
+        // Post answer 
         [Authorize]
         public ActionResult AnswerQuestion(string qtContent, int qtId = 0)
         {
@@ -248,7 +148,7 @@ namespace HNHB.Controllers
                           select ans).ToList().OrderByDescending(x => x.CreateDate);
             return PartialView("QtAnswerPartial", answer);
         }
-
+        // Delete answer by admin
         [Authorize(Roles = "Administrator")]
         public ActionResult RemoveAnswer(int ansId)
         {
@@ -264,7 +164,7 @@ namespace HNHB.Controllers
                           select a).ToList().OrderByDescending(x => x.CreateDate);
             return PartialView("QtAnswerPartial", answer);
         }
-
+        // Vote up function
         [HttpGet]
         [Authorize]
         public ActionResult VoteUp(int? canswerId)
@@ -284,7 +184,7 @@ namespace HNHB.Controllers
 
             return Json(votes, JsonRequestBehavior.AllowGet);
         }
-
+        // Vote down function
         [Authorize]
         [HttpGet]
         [Authorize]
@@ -318,7 +218,7 @@ namespace HNHB.Controllers
             var split1 = s1.Split(' ');
             return (double)split1.Intersect(s2.Split(' ')).Count() / split1.Count() * 100.0;
         }
-
+        // Get list to suggest Anwer
         [HttpPost]
         public ActionResult QuestionSuggest(string title)
         {
@@ -342,7 +242,7 @@ namespace HNHB.Controllers
             }
             return Json(new { success = false });
         }
-
+        // Return vote for answer
         [Authorize]
         [HttpGet]
         public ActionResult CurrentUserVote(int? canswerId)
@@ -365,7 +265,7 @@ namespace HNHB.Controllers
             ViewBag.LstTags = (from tag in db.Tags select tag).ToList();
             return View(qtContent);
         }
-
+        // Edit Question
         [Authorize]
         [HttpPost, ValidateInput(false)]
         public ActionResult EditQuestion(string questionId, string editorContent, string tagSelect, string stringTitle)
@@ -418,7 +318,7 @@ namespace HNHB.Controllers
             return Json(id, JsonRequestBehavior.AllowGet);
         }
 
-
+        // Deactive question
         [Authorize(Roles = "Administrator")]
         public ActionResult Deactive(int? id)
         {

@@ -19,6 +19,7 @@ namespace HNHB.Controllers
 {
     [Authorize]
     public class AccountController : Controller
+    // Get database
     {
         Entities db = new Entities();
         
@@ -528,14 +529,14 @@ namespace HNHB.Controllers
                 ModelState.AddModelError("", error);
             }
         }
-
+        // SHow Avatar
         public ActionResult _UsersAvatar()
         {
             int CurrentId = User.Identity.GetUserId<int>();
             ViewBag.Avatar = db.UserProfiles.Where(u => u.Id == CurrentId).FirstOrDefault().Avatar;
             return PartialView("_UsersAvatar");
         }
-
+        // Rerturn current URL
         private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
@@ -544,6 +545,7 @@ namespace HNHB.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
+        // Change Password
         [HttpPost]
         public async Task<ActionResult> ChangePassword(LocalPasswordModel model)
         {

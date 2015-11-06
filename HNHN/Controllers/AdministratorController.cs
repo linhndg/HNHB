@@ -20,10 +20,11 @@ namespace HNHB.Controllers
     [Authorize(Roles = "Administrator")]
     public class AdministratorController : Controller
     {
+        // Get Database
         private Entities dbContext = new Entities();
         //
         // GET: /Administrator/
-
+        //Get data for index page
         public ActionResult Index()
         {
             ViewBag.NumOfPlace = dbContext.Places.Where(p => p.IsActive == true).Count();
@@ -34,18 +35,18 @@ namespace HNHB.Controllers
             ViewBag.Report = dbContext.Reports.Where(r => r.isChecked == false).ToList();
             return View();
         }
-
+        //Get data for manage category
         public ActionResult ManageCategory()
         {
             var category = (from ct in dbContext.Categories where ct.isActive == true select ct).ToList();
             return View(category);
         }
-
+        //Partial to run Ajax update
         public PartialViewResult CategoryUpdate()
         {
             return PartialView();
         }
-
+        // Update Category
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CategoryUpdate(Category model)
@@ -68,7 +69,7 @@ namespace HNHB.Controllers
             }
             return RedirectToAction("ManageCategory", "Administrator");
         }
-
+        // Change data Sub Category
         public ActionResult ManageSubCategory(int? id = 0)
         {
             if (id == 0)
@@ -82,12 +83,12 @@ namespace HNHB.Controllers
             ViewBag.CtName = dbContext.Categories.Find(id).Name;
             return View(subcategory);
         }
-
+        // Run partial to use Ajax in SubCategory Update
         public PartialViewResult SubCategoryUpdate()
         {
             return PartialView();
         }
-
+        // Change data sub category
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult SubCategoryUpdate(SubCategory model, HttpPostedFileBase uploadIcon)
@@ -119,7 +120,7 @@ namespace HNHB.Controllers
             }
             return RedirectToAction("ManageSubCategory", "Administrator", new { id = ctId });
         }
-
+        // Get list User
         #region[ManageUser]
         public ActionResult ManageUser()
         {
@@ -127,7 +128,7 @@ namespace HNHB.Controllers
             var users = (from user in dbContext.UserProfiles where user.Id != CurrentID select user).ToList();
             return View(users);
         }
-
+        // Active or Deactive User
         public ActionResult ChangeUsersActive(int id)
         {
             UserProfile user = dbContext.UserProfiles.Find(id);
@@ -158,7 +159,7 @@ namespace HNHB.Controllers
             return RedirectToAction("ManageUser", "Administrator");
         }
         #endregion
-
+        // Manage Coordinate
         #region[ManageCoordinate]
         public ActionResult ManageCoordinate()
         {
@@ -171,7 +172,7 @@ namespace HNHB.Controllers
         {
             return PartialView();
         }
-
+        // Update Coordinate
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CoordinateUpdate(Coordinate model)
@@ -192,7 +193,7 @@ namespace HNHB.Controllers
             return RedirectToAction("ManageCoordinate", "Administrator");
         }
         #endregion
-
+        // Manage Rate Category
         #region[ManageRateCategory]
         public ActionResult ManageRateCategory()
         {
@@ -204,7 +205,7 @@ namespace HNHB.Controllers
         {
             return PartialView();
         }
-
+        // Update Rate Category
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult RateCategoryUpdate(RateCategory model)
@@ -225,7 +226,7 @@ namespace HNHB.Controllers
             return RedirectToAction("ManageRateCategory", "Administrator");
         }
         #endregion
-
+        // Get list all tag
         #region[ManageTag]
         public ActionResult ManageTag()
         {
@@ -237,7 +238,7 @@ namespace HNHB.Controllers
         {
             return PartialView();
         }
-
+        // Save tag to database
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult TagUpdate(Tag model)
@@ -258,13 +259,14 @@ namespace HNHB.Controllers
             return RedirectToAction("ManageTag", "Administrator");
         }
         #endregion
-
+        //Get all question
         #region[ManageQuestion]
         public ActionResult ManageQuestion()
         {
             var question = (from ques in dbContext.Questions select ques).ToList();
             return View(question);
         }
+        // Active or deactive question
         [HttpPost]
         public ActionResult ChangeQuestionsActive(int id)
         {
@@ -282,12 +284,12 @@ namespace HNHB.Controllers
             return RedirectToAction("ManageQuestion", "Administrator");
         }
         #endregion
-
+        //Get all Artical
         public ActionResult ManageArticle()
         {
             return View(dbContext.Articles.ToList());
         }
-
+        //Active or deactive artical
         public ActionResult ChangeArticlesActive(int id)
         {
             Article article = dbContext.Articles.Find(id);
@@ -303,7 +305,7 @@ namespace HNHB.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("ManageArticle", "Administrator");
         }
-
+        // Chaneg state of report
         public void ReportCheck(int id)
         {
             Report report = dbContext.Reports.Find(id);
@@ -311,12 +313,12 @@ namespace HNHB.Controllers
             dbContext.Entry(report).State = EntityState.Modified;
             dbContext.SaveChanges();
         }
-
+        // Get all place
         public ActionResult ManagePlace()
         {
             return View(dbContext.Places.ToList());
         }
-
+        // Active or deactive Place
         public ActionResult ChangePlaceActive(int id)
         {
             Place place = dbContext.Places.Find(id);
@@ -338,7 +340,7 @@ namespace HNHB.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("ManagePlace", "Administrator");
         }
-
+        // Approve or not approve Place
         public ActionResult ChangePlaceApprove(int id)
         {
             Place place = dbContext.Places.Find(id);
@@ -354,14 +356,14 @@ namespace HNHB.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("ManagePlace", "Administrator");
         }
-
+        // Manage Applied Rate
         public ActionResult ManageAppiledRate(int id)
         {
             ViewBag.SCtId = id;
             ViewBag.SCtName = dbContext.SubCategories.Find(id).Name;
             return View(dbContext.AppliedRateCategories.Where(a => a.SubCategoryId == id));
         }
-
+        // Delete Applied Rate
         public ActionResult DeleteAppliedRate(int subcategory, int ratecategory)
         {
             AppliedRateCategory model = dbContext.AppliedRateCategories.Where(a => a.RateCategoryId == ratecategory && a.SubCategoryId == subcategory).FirstOrDefault();
@@ -369,7 +371,7 @@ namespace HNHB.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("ManageAppiledRate", "Administrator", new { id = subcategory });
         }
-
+        // Change Applied Rate
         public ActionResult AppliedRateUpdate(int id)
         {
             var listAppliedRate = dbContext.AppliedRateCategories.Where(a => a.SubCategoryId == id).Select(a => a.RateCategoryId).ToList();
@@ -385,14 +387,14 @@ namespace HNHB.Controllers
             dbContext.SaveChanges();
             return RedirectToAction("ManageAppiledRate", "Administrator", new { id = model.SubCategoryId });
         }
-
+        // Approve Virtual Tourist
         public ActionResult ManageVirtualTourist()
         {
             List<Place> model = dbContext.Places.Where(p => p.Virtualtourist != null).ToList();
             ViewBag.PlaceId = new SelectList(dbContext.Places.Where(p => p.IsActive == true && p.IsApproved == true), "Id", "Name");
             return View(model);
         }
-
+        // Insert Virtual Tour
         public ActionResult AddVirtualTourist(int PlaceId, string virtualTouristLink)
         {
             Place model = dbContext.Places.Find(PlaceId);

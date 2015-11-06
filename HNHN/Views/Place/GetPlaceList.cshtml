@@ -1,0 +1,224 @@
+﻿@model IEnumerable<HNHB.Models.Entities.Place>
+@using HNHB.HelperExtension
+<div class="col-md-12">
+    <div>
+        @if (ViewBag.SearchKey != null && ViewBag.SearchKey != "")
+        {
+            <span class="label label-sm label-lblue">@ViewBag.SearchKey <a class="white" style="cursor:pointer" onclick="RemoveSearch()">x</a></span>
+        }
+        @if (ViewBag.DistrictId != null)
+        {
+            foreach (var item in ViewBag.DistrictId)
+            {
+                if (item.Selected)
+                {
+                    <span class="label label-sm label-red">@item.Text <a class="white" style="cursor:pointer" onclick="RemoveDistrictFilter(@item.Value)">x</a></span>
+                }
+            }
+        }
+        @if (ViewBag.SubcategoryId != null)
+        {
+            foreach (var item in ViewBag.SubcategoryId)
+            {
+                if (item.Selected)
+                {
+                    <span class="label label-sm label-green">@item.Text <a class="white" style="cursor:pointer" onclick="RemoveSubcategoryFilter(@item.Value)">x</a></span>
+                }
+            }
+        }
+        @if (ViewBag.TagId != null)
+        {
+            foreach (var item in ViewBag.TagId)
+            {
+                if (item.Selected)
+                {
+                    <span class="label label-sm label-orange">@item.Text <a class="white" style="cursor:pointer" onclick="RemoveTagFilter(@item.Value)">x</a></span>
+                }
+            }
+        }
+    </div>
+    <div class="row">
+        <div class="col-md-9">
+            <select id="sortSelect" onchange="SwitchSort()">
+                <option value="view">Xem nhiều nhất</option>
+                <option value="new">Địa điểm mới</option>
+                <option value="rate">Đánh giá cao nhất</option>
+                <option value="review">Bình luận nhiều nhất</option>
+                <option value="lowprice">Giá từ thấp đến cao</option>
+            </select>
+            &nbsp; Hiện có <text style="color:red"> @ViewBag.NumOfPlace</text> địa điểm
+        </div>
+        <div class="col-md-3" style="font-size:22px">
+            <i id="btnGrid" class="fa fa-th-large pull-right" onclick="SwitchView('grid')" style="cursor:pointer"></i>
+            <i id="btnList" class="fa fa-th-list red pull-right" onclick="SwitchView('list')" style="cursor:pointer"></i>
+        </div>
+    </div>
+</div>
+<div class="col-md-12">
+    <div class="divider-9"></div>
+</div>
+@foreach (var place in Model)
+{
+    <div class="pl-list">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="@Url.Action("Details", "Place", new { id = place.Id })" class="main-pic-thumb" style="background-image: url('@Url.Content(place.Images.First().ImagePath)');"></a>
+                </div>
+                <div class="col-md-7">
+                    <h4>
+                        <a href="@Url.Action("Details", "Place", new { id = place.Id })">
+                            @Html.DisplayFor(m => place.Name)
+                            @if (place.IsApproved)
+                            {
+                                <i class="fa fa-check-circle lblue"></i>
+                            }
+                        </a>
+                    </h4>
+                    <p><i class="fa fa-map-marker"></i> @Html.DisplayFor(m => place.Address)</p>
+                    @{
+                            string num = "";
+                            if (place.PhoneNumber != null)
+                            {
+                                num = place.PhoneNumber;
+                            }
+                            num = num.ToPhoneNumber();
+                            <p><i class="fa fa-phone"></i> @num</p>
+                    }
+                    @if (place.Items.Count > 0)
+                    {
+                        <p><i class="fa fa-usd"></i> Giá từ @place.Items.OrderBy(i => i.Price).First().Price.ToString("N0") VND</p>
+                    }
+                    <p>@Html.DisplayFor(m => place.Description)</p>
+                </div>
+                <div class="col-md-2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p class="bg-color circle-4 white" style="margin-right: auto; margin-left: auto; display: inherit;"><strong>@Html.DisplayFor(m => place.RateValue)</strong></p>
+                        </div>
+                        <div class="col-md-12">
+                            <span class="label label-green col-md-12">@Html.DisplayFor(m => place.Reviews.Where(r => r.isActive == true).ToList().Count) Bình luận</span>
+                            <span class="label label-green col-md-12" style="margin-top:5px">@Html.DisplayFor(m => place.View) Lượt xem</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="divider-9"></div>
+        </div>
+    </div>
+    <div class="pl-grid" style="display:none">
+        <div class="col-md-3" title="@place.Name">
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="@Url.Action("Details", "Place", new { id = place.Id })" class="main-pic-thumb" style="background-image: url('@Url.Content(place.Images.First().ImagePath)');"></a>
+                </div>
+                <div class="col-md-12" style="line-height:14px">
+                    @if (@place.Name.Length > 20)
+                    {
+                        <h4 style="font-size:13px">
+                            <a href="@Url.Action("Details", "Place", new { id = place.Id })">
+                                @place.Name.Substring(0, 20)...
+                                @if (place.IsApproved)
+                                {
+                                    <i class="fa fa-check-circle lblue"></i>
+                                }
+                            </a>
+                        </h4>
+                    }
+                    else
+                    {
+                        <h4 style="font-size:13px">
+                            <a href="@Url.Action("Details", "Place", new { id = place.Id })">
+                                @place.Name
+                                @if (place.IsApproved)
+                                {
+                                    <i class="fa fa-check-circle lblue"></i>
+                                }
+                            </a>
+                        </h4>
+                    }
+                    <p style="font-size:12px">@place.District.DistrictName<text>, HN</text></p>
+                </div>
+                <div class="col-md-12" style="margin-bottom:10px">
+                    <span class="label label-lblue col-md-3"><strong>@Html.DisplayFor(m => place.RateValue)</strong></span>
+                    <span class="label label-green col-md-9">@Html.DisplayFor(m => place.Reviews.Count) Bình luận</span>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@if (ViewBag.NumOfPlace != null && (int)ViewBag.NumOfPlace > Model.Count())
+{
+    <div class="col-md-12">
+        <input type="button" class="btn btn-color" style="width:100%" value="Xem thêm" onclick="GetMorePlace()" />
+    </div>
+}
+@using (Ajax.BeginForm("GetPlaceList", "Place", null, new AjaxOptions { UpdateTargetId = "placeList", OnSuccess = "GetPlacesSuccess()" }, new { id = "placeForm", role = "form" }))
+{
+    if (ViewBag.Page != null)
+    {
+        <input type="hidden" name="page" id="page" class="btn btn-color" style="width:100%" value="@ViewBag.Page" />
+    }
+    if (ViewBag.Sort != null)
+    {
+        <input type="hidden" name="sort" id="sort" class="btn btn-color" style="width:100%" value="@ViewBag.Sort" />
+    }
+    if (ViewBag.DistrictId != null)
+    {
+        <select name="district" id="district" multiple style="display:none">
+            @foreach (var item in ViewBag.DistrictId)
+            {
+                if (item.Selected)
+                {
+                    <option value="@item.Value" selected="selected">@item.Text</option>
+                }
+                else
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            }
+        </select>
+    }
+    if (ViewBag.TagId != null)
+    {
+        <select name="tag" id="tag" multiple style="display:none">
+            @foreach (var item in ViewBag.TagId)
+            {
+                if (item.Selected)
+                {
+                    <option value="@item.Value" selected="selected">@item.Text</option>
+                }
+                else
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            }
+        </select>
+    }
+    if (ViewBag.SubCategoryId != null)
+    {
+        <select name="subcategory" id="subcategory" multiple style="display:none">
+            @foreach (var item in ViewBag.SubCategoryId)
+            {
+                if (item.Selected)
+                {
+                    <option value="@item.Value" selected="selected">@item.Text</option>
+                }
+                else
+                {
+                    <option value="@item.Value">@item.Text</option>
+                }
+            }
+        </select>
+    }
+    if (ViewBag.SearchKey != null)
+    {
+        <input type="hidden" name="search" id="search" class="btn btn-color" style="width:100%" value="@ViewBag.SearchKey" />
+    }
+}
+<script>
+    $('#sortSelect').val('@ViewBag.Sort');
+</script>
+

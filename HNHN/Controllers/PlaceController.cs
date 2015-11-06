@@ -279,15 +279,15 @@ namespace HNHB.Controllers
 
 
         // PlaceDAO PlaceDAO= new PlaceDAO();
-         
-        //[HttpPost]
-        //public ActionResult Search(PlaceDAO model)
-        //{
-        //    ViewBag.SubCategoryId = new SelectList(db.SubCategories, "Id", "Name");
-        //    ViewBag.DistrictId = new SelectList(db.Districts, "Id", "DistrictName");
-        //    var place = new PlaceModels();
-        //    return View(place.Search(model));
-        //}
+
+        [HttpPost]
+        public ActionResult Search(HNHB.Models.PlaceModels.SearchModel model)
+        {
+            ViewBag.SubCategoryId = new SelectList(db.SubCategories, "Id", "Name");
+            ViewBag.DistrictId = new SelectList(db.Districts, "Id", "DistrictName");
+            var place = new PlaceModels();
+            return View(place.Search(model));
+        }
 
         public ActionResult Details(int id)
         {
@@ -579,20 +579,234 @@ namespace HNHB.Controllers
             return RedirectToAction("Error", "Home");
         }
 
-        //public ActionResult VirtualTourist(int id)
-        //{
-        //    ViewBag.Link = db.Places.Find(id).Virtualtourist;
-        //    if (ViewBag.Link != null)
-        //    {
-        //        ViewBag.Name = db.Places.Find(id).Name;
-        //        return View();
-        //    }
-        //    return RedirectToAction("Error", "Home");
-        //}
-        public ActionResult VirtualTourist()
+        public ActionResult VirtualTourist(int id)
         {
+            ViewBag.Link = db.Places.Find(id).Virtualtourist;
+            if (ViewBag.Link != null)
+            {
+                ViewBag.Name = db.Places.Find(id).Name;
+                return View();
+            }
+            return RedirectToAction("Error", "Home");
+        }
+        //public ActionResult VirtualTourist()
+        //{
 
-            return View();
+        //    return View();
+        //}
+        public ActionResult IsNameAvailble(string Name)
+        {
+            using (Entities db = new Entities())
+            {
+                try
+                {
+                    var name = db.Places.Single(m => m.Name == Name);
+                    return Json(false, JsonRequestBehavior.AllowGet);
+                }
+                catch (Exception)
+                {
+                    return Json(true, JsonRequestBehavior.AllowGet);
+                }
+            }
+        }
+          [HttpPost]
+        public JsonResult LoadImageList(int imageId, int placeId, int reviewId)
+        {
+            List<Image> images = new List<Image>();
+            Image first = (from i in db.Images where i.Id == imageId select i).FirstOrDefault();
+            if (first == null)
+            {
+                return Json(new { success = false, message = "Có lỗi xảy ra. Xin lỗi vì sự bất tiện này." });
+            }
+            else
+            {
+                images.Add(new Image
+                {
+                    Id = first.Id,
+                    ImagePath = Url.Content(first.ImagePath),
+                    ImageSmallPath = Url.Content(first.ImageSmallPath)
+                });
+            }
+            if (reviewId != 0)
+            {
+                List<Image> list = (from i in db.Images where i.ReviewId == reviewId && i.Id != imageId select i).ToList();
+                foreach (var image in list)
+                {
+                    images.Add(new Image
+                    {
+                        Id = image.Id,
+                        ImagePath = Url.Content(image.ImagePath),
+                        ImageSmallPath = Url.Content(image.ImageSmallPath)
+                    });
+                }
+            }
+            else
+            {
+                List<Image> list = (from i in db.Images where i.PlaceId == placeId && i.Id != imageId select i).ToList();
+                foreach (var image in list)
+                {
+                    images.Add(new Image
+                    {
+                        Id = image.Id,
+                        ImagePath = Url.Content(image.ImagePath),
+                        ImageSmallPath = Url.Content(image.ImageSmallPath)
+                    });
+                }
+            }
+            return Json(new { success = true, images = images });
+        }
+
+        [HttpPost]
+        public JsonResult LoadPlaceImageList(int placeId)
+        {
+            List<Image> images = new List<Image>();
+            if (db.Places.Any(p => p.Id == placeId))
+            {
+                List<Image> list = (from i in db.Images where i.PlaceId == placeId select i).ToList();
+                foreach (var image in list)
+                {
+                    images.Add(new Image
+                    {
+                        Id = image.Id,
+                        ImagePath = Url.Content(image.ImagePath),
+                        ImageSmallPath = Url.Content(image.ImageSmallPath)
+                    });
+                }
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+            return Json(new { success = true, images = images });
+        }
+
+        [Authorize]
+        public ActionResult AddReview(int Id, string title, string content, bool? checkRate, List<Image> images, List<Rate> rate)
+        {
+            if (checkRate == null)
+            {
+                checkRate = false;
+            }
+            Review model = new Review
+            {
+                Title = title,
+                Content = content,
+                PlaceId = Id,
+                isActive = true,
+                CreateDate = DateTime.Now,
+                UserId = User.Identity.GetUserId<int>(),
+                UserProfile = db.UserProfiles.Find(User.Identity.GetUserId<int>())
+            };
+            db.Reviews.Add(model);
+            db.SaveChanges();
+            if (images != null && images.Count > 0)
+            {
+                foreach (var img in images)
+                {
+                    img.PlaceId = model.PlaceId;
+                    img.ReviewId = model.Id;
+                    db.Images.Add(img);
+                }
+                db.SaveChanges();
+            }
+            if ((bool)checkRate)
+            {
+                foreach (var rt in rate)
+                {
+                    rt.ReviewId = model.Id;
+                    rt.RateCategory = db.RateCategories.Find(rt.RateCategoryId);
+                    db.Rates.Add(rt);
+                }
+                db.SaveChanges();
+                List<Rate> rates = db.Rates.Where(r => r.Review.PlaceId == Id && r.Review.isActive == true).ToList();
+                double totalRate = Math.Round((rates.Sum(r => r.Value) / (double)rates.Count()), 1);
+                Place place = db.Places.Find(Id);
+                place.RateValue = totalRate;
+                db.Entry(place).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+
+            return PartialView("PlaceReview", db.Places.Where(p => p.Id == Id).FirstOrDefault().Reviews.Where(r => r.isActive == true).ToList());
+        }
+
+        [Authorize(Roles = "Administrator")]
+        public ActionResult RemoveReview(int rvId)
+        {
+            Review review = db.Reviews.Find(rvId);
+            if (review != null)
+            {
+                review.isActive = false;
+                db.Entry(review).State = EntityState.Modified;
+                db.SaveChanges();
+                List<Rate> rates = db.Rates.Where(r => r.Review.PlaceId == review.PlaceId && r.Review.isActive == true).ToList();
+                double totalRate = Math.Round((rates.Sum(r => r.Value) / (double)rates.Count()), 1);
+                Place place = db.Places.Find(review.PlaceId);
+                place.RateValue = totalRate;
+                db.Entry(place).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            return PartialView("PlaceReview", db.Places.Where(p => p.Id == review.PlaceId).FirstOrDefault().Reviews.Where(r => r.isActive == true).ToList());
+        }
+
+        [Authorize]
+        public ActionResult UploadReviewImage()
+        {
+            List<Image> images = new List<Image>();
+            foreach (string fileName in Request.Files)
+            {
+                HttpPostedFileBase file = Request.Files[fileName];
+                //Save file content goes here
+                List<string> list = ImageUploadExtension.renameUploadFile(file, "Resize");
+                if (list != null)
+                {
+                    Image img = new Image()
+                    {
+                        ImagePath = list[0],
+                        ImageSmallPath = list[1]
+                    };
+                    images.Add(img);
+                }
+            }
+            return Json(new { isSuccess = true, images = images });
+        }
+
+        [HttpPost]
+        public ActionResult TotalRate(int Id)
+        {
+            var rateList = from r in db.Rates where r.Review.PlaceId == Id && r.Review.isActive == true select new { r.RateCategory.Name, r.Value };
+            if (rateList != null)
+            {
+                if (rateList.Count() > 0)
+                {
+                    var result = from r in rateList
+                                 group r by new { r.Name } into g
+                                 select new { Name = g.Key.Name, Value = g.Sum(x => x.Value), Count = g.Count() };
+                    return Json(new { isSuccess = true, result = result });
+                }
+                else
+                {
+                    int placeSubCategory = (from p in db.Places where p.Id == Id select p.SubCategoryId).FirstOrDefault();
+                    var result = from a in db.AppliedRateCategories
+                                 where a.SubCategoryId == placeSubCategory
+                                 select new { Name = a.RateCategory.Name, Value = "--" };
+                    return Json(new { isSuccess = true, result = result });
+                }
+            }
+            return Json(new { isSuccess = false });
+        }
+        [Authorize]
+        public void AddReport(int Id, string reportContent)
+        {
+            Report rp = new Report
+            {
+                PlaceId = Id,
+                Reason = reportContent,
+                UserId = User.Identity.GetUserId<int>(),
+                isChecked = false
+            };
+            db.Reports.Add(rp);
+            db.SaveChanges();
         }
     }
+    
 }

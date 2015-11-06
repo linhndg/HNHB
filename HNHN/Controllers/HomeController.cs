@@ -15,7 +15,9 @@ namespace HNHB.Controllers
     [RequireHttps]
     public class HomeController : Controller
     {
+          // Get database context
         Entities db = new Entities();
+        // Get data for homepage
         public ActionResult Index()
         {
             //List<int> CateList = new List<int> { 1, 2, 8, 10 };
